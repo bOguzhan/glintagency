@@ -4,9 +4,9 @@
 	"display": "standalone",
 	"scope": "/",
 	"start_url": "/",
-	"description": "Web Agency Leading in Performant Web Design Solutions - Mintaka Studio",
-	"name": "Mintaka",
-	"short_name": "Mintaka",
+	"description": "Design Agency Leading in Performant Marketing Solutions - Glint Agency",
+	"name": "Glint Agency",
+	"short_name": "Glint Agency",
 	"icons": [
 		{
 			"src": "/pwa-64x64.png",
