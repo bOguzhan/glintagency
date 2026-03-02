@@ -30,6 +30,8 @@ function getArticleReadingTime(body: string): number {
 }
 
 const readingTime = getArticleReadingTime(body);
+const postImage = frontmatter.image?.url || "https://mintaka.co/opengraph/social-og.jpg";
+const postAlt = frontmatter.image?.alt || frontmatter.title;
 ---
 
 <BaseLayout seo={seo}>
@@ -56,7 +58,14 @@ const readingTime = getArticleReadingTime(body);
 				}
 			</div>
 			<div class="mt-12 w-full justify-center">
-				<Image class="mt-12 w-full rounded-lg object-cover" src={frontmatter.image.source} alt={frontmatter.image.alt} />
+    {/* 2. Update the Image tag here with explicit width/height or inferSize */}
+    <Image 
+        class="mt-12 w-full rounded-lg object-cover" 
+        src={postImage} 
+        alt={postAlt} 
+        width={1200} 
+        height={630}
+    />
 				<div class="flex justify-between px-2 pt-4 font-mono text-sm">
 					<div class="flex flex-wrap gap-1">
 						{frontmatter?.tags?.length > 0 && <span class="py-3">TAGS:</span>}
