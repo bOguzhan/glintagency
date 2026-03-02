@@ -4,7 +4,7 @@ import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 
 const { slug } = Astro.params;
 
-// Use a fallback URL if the .env isn't loading yet to test
+// Fallback to local IP if .env isn't set
 const WP_GRAPHQL_URL = import.meta.env.WORDPRESS_API_URL || "http://127.0.0.1/glintajans/graphql";
 
 const response = await fetch(WP_GRAPHQL_URL, {
@@ -15,8 +15,8 @@ const response = await fetch(WP_GRAPHQL_URL, {
   },
   body: JSON.stringify({
     query: `
-      query GetWorkBySlug($slug: ID!) {
-        work(id: $slug, idType: SLUG) {
+      query GetPostBySlug($slug: ID!) {
+        post(id: $slug, idType: SLUG) {
           title
           content
           slug
@@ -42,8 +42,8 @@ if (!response.ok) {
 }
 
 const json = await response.json();
-// FIXED: Changed data.post to data.work to match your query
-const post = json.data?.work;
+// CHANGED: Now looking for .post instead of .work
+const post = json.data?.post;
 
 if (!post) {
   console.log(`Post not found for slug: ${slug}`);
