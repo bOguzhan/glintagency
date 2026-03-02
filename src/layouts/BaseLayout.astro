@@ -126,20 +126,20 @@ function cursorFollowerActive() {
         }, index * 0.35);
     });
 
-    // 3. FADE & SPLIT REVEAL
-    // Fade out the counter
-    tl.to(loaderContent, {
+    // 3. THE REVEAL FIX
+    // Fade the counter AND the solid wine wrapper so we can see the panels behind/underneath
+    tl.to([loaderContent, wineWrapper], {
         opacity: 0,
         duration: 0.5,
         ease: "power2.out"
     });
 
-    // Split the panels
+    // Now the split will be visible because the wine is gone
     tl.to(preloaderTop, {
         yPercent: -100,
         duration: 1.1,
         ease: "expo.inOut"
-    }, "-=0.2");
+    }, "-=0.3");
 
     tl.to(preloaderBottom, {
         yPercent: 100,
@@ -147,7 +147,6 @@ function cursorFollowerActive() {
         ease: "expo.inOut",
         onComplete: () => {
             preloader.style.display = "none";
-            // Check if global init exists before calling
             if (typeof window.init === "function") window.init();
         }
     }, "<"); 
