@@ -104,42 +104,63 @@ const translatePath = useTranslatedPath(lang);
 		const parentSplit = new SplitText(".hero h1", {
 			linesClass: "split-parent",
 		});
-const contactBtn = document.querySelector('.hero-button'); // Ensure this matches your class
+
+const contactBtn = document.querySelector('.hero-button'); 
 
 if (contactBtn) {
-    // Create the heartbeat timeline
+    // 1. Initial State: Ensure rounded corners and brand transition
+    gsap.set(contactBtn, { borderRadius: "50px" }); // Adjust to match your CSS exactly
+
+    // 2. The Slower "Luxury" Heartbeat Timeline
     let heartbeat = gsap.timeline({ repeat: -1, paused: true });
     
-    // The "Lub-Dub" rhythm
-    heartbeat.to(contactBtn, { scale: 1.15, duration: 0.1, ease: "power2.out" })
-             .to(contactBtn, { scale: 1.0, duration: 0.1, ease: "power2.in" })
-             .to(contactBtn, { scale: 1.1, duration: 0.1, ease: "power2.out" }, "+=0.05")
-             .to(contactBtn, { scale: 1.0, duration: 0.2, ease: "power2.in" });
+    heartbeat
+        // First beat (Lub)
+        .to(contactBtn, { 
+            scale: 1.08, 
+            backgroundColor: "#b51f3a", 
+            color: "#fff",
+            duration: 0.2, 
+            ease: "power2.out" 
+        })
+        .to(contactBtn, { scale: 1.0, duration: 0.3, ease: "power2.inOut" })
+        // Second beat (Dub)
+        .to(contactBtn, { 
+            scale: 1.05, 
+            duration: 0.2, 
+            ease: "power2.out" 
+        }, "+=0.1")
+        .to(contactBtn, { scale: 1.0, duration: 0.6, ease: "power2.inOut" });
 
     window.addEventListener("mousemove", (e) => {
         const rect = contactBtn.getBoundingClientRect();
         const btnX = rect.left + rect.width / 2;
         const btnY = rect.top + rect.height / 2;
         
-        // Calculate distance between mouse and button center
         const distance = Math.hypot(e.clientX - btnX, e.clientY - btnY);
         
-        // If mouse is within 400px, start "beating"
-        if (distance < 400) {
+        if (distance < 500) { // Increased trigger area
             heartbeat.play();
-            // Speed up the heart rate as you get closer (timeScale)
-            const speed = gsap.utils.mapRange(0, 400, 2.5, 1, distance);
-            gsap.to(heartbeat, { timeScale: speed, duration: 0.3 });
             
-            // Subtle Burgundy glow pulse
+            // Map the "Speed" - Slower (0.8) to slightly faster (1.5)
+            const speed = gsap.utils.mapRange(0, 500, 1.5, 0.8, distance);
+            gsap.to(heartbeat, { timeScale: speed, duration: 0.5 });
+            
+            // Large, Rounded Burgundy Glow
+            const glowSize = gsap.utils.mapRange(0, 500, 60, 0, distance);
             gsap.to(contactBtn, { 
-                boxShadow: `0 0 ${gsap.utils.mapRange(0, 400, 30, 0, distance)}px rgba(181, 31, 58, 0.6)`,
-                duration: 0.3 
+                boxShadow: `0 0 ${glowSize}px rgba(181, 31, 58, 0.4)`,
+                duration: 0.4 
             });
         } else {
-            // Calm down if the mouse moves away
-            gsap.to(heartbeat, { timeScale: 1, duration: 1 });
-            if (distance > 500) heartbeat.pause();
+            // Smoothly return to original state
+            gsap.to(heartbeat, { timeScale: 0.8, duration: 1.5 });
+            gsap.to(contactBtn, { 
+                backgroundColor: "#000", // Or your original color
+                boxShadow: "0 0 0px rgba(181, 31, 58, 0)",
+                duration: 0.8 
+            });
+            if (distance > 700) heartbeat.pause();
         }
     });
 }
