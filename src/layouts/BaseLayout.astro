@@ -115,41 +115,43 @@ function initLoader() {
     gsap.to(wave, {
         xPercent: -50,
         repeat: -1,
-        duration: 3,
+        duration: 2.5,
         ease: "linear"
     });
 
-    // 2. The 4-step random rise
+    // 2. The Smooth Fluid Rise (One long, 4-second pour)
+    gsap.to(wineContainer, {
+        height: "100%",
+        duration: 4.5,
+        ease: "power1.inOut"
+    });
+
+    // 3. The 6-Step Number Logic
     const steps = [
-        Math.floor(Math.random() * 25) + 5,
-        Math.floor(Math.random() * 25) + 40,
-        Math.floor(Math.random() * 20) + 75,
-        100
+        Math.floor(Math.random() * 15) + 5,   // Step 1
+        Math.floor(Math.random() * 15) + 25,  // Step 2
+        Math.floor(Math.random() * 15) + 45,  // Step 3
+        Math.floor(Math.random() * 10) + 65,  // Step 4
+        Math.floor(Math.random() * 10) + 85,  // Step 5
+        100                                   // Step 6
     ];
 
     const tl = gsap.timeline();
 
-    steps.forEach((step) => {
+    steps.forEach((step, index) => {
         tl.to(percentText, {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
-            onStart: () => {
-                // The vertical rise feels fluid with power2 easing
-                gsap.to(wineContainer, { 
-                    height: `${step}%`, 
-                    duration: 1.2, 
-                    ease: "power2.inOut" 
-                });
-            }
-        }, "+=0.7");
+            ease: "none"
+        }, "+=0.6"); // The pause between number updates
     });
 
-    // 3. Clean Reveal
+    // 4. The Reveal
     tl.to(preloader, {
-        opacity: 0,
-        duration: 1,
-        ease: "power2.inOut",
+        yPercent: -100,
+        duration: 1.5,
+        ease: "expo.inOut",
         delay: 0.5,
         onComplete: () => {
             preloader.style.display = "none";
