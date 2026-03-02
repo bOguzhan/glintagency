@@ -77,20 +77,29 @@ function cursorFollowerActive() {
 		<AstroSeo {...seo} />
 	</head>
 	<body class="bg-slate-50">
-<div id="preloader" class="fixed inset-0 z-[100] flex items-end justify-start p-12 bg-[#f4f4f4] overflow-hidden">
-  <div id="wine-container" class="absolute bottom-0 left-0 w-full bg-[#800020] z-0" style="height: 0%;">
-    <div class="absolute top-0 left-0 w-[200%] h-20 -translate-y-full">
-      <svg class="wine-wave" viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 100%; fill: #800020;">
-        <path d="M0,0 C300,0 300,120 600,120 C900,120 900,0 1200,0 L1200,120 L0,120 Z"></path>
-      </svg>
-    </div>
+<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#f4f4f4] overflow-hidden">
+  
+  <div id="wine-wrapper" class="absolute inset-0 w-full h-full bg-white">
+    <div id="wine-tank" class="absolute bottom-0 left-0 w-full bg-[#800020] z-10" style="height: 0%;"></div>
+
+    <svg class="absolute left-0 w-full h-[120px] z-20 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="bottom: -120px;">
+      <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.8)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#800020" />
+      </g>
+    </svg>
   </div>
-  
-  <div class="absolute inset-0 opacity-20 pointer-events-none grain-bg z-10"></div>
-  
-  <div class="relative z-20 flex items-baseline">
-    <span id="loader-percent" class="text-[15vw] font-medium leading-none tracking-tighter mix-blend-difference text-white">0</span>
-    <span class="text-[5vw] font-light ml-2 mix-blend-difference text-white">%</span>
+
+  <div class="absolute inset-0 opacity-10 pointer-events-none grain-bg z-30"></div>
+
+  <div class="relative z-40 flex items-baseline mix-blend-difference">
+    <span id="loader-percent" class="text-[18vw] font-black text-white leading-none tracking-tighter">0</span>
+    <span class="text-[5vw] font-light text-white ml-2">%</span>
   </div>
 </div>
 		<BackgroundTexture />
@@ -106,56 +115,53 @@ function cursorFollowerActive() {
 function initLoader() {
     const percentText = document.querySelector("#loader-percent");
     const preloader = document.querySelector("#preloader");
-    const wineContainer = document.querySelector("#wine-container");
-    const wave = document.querySelector(".wine-wave");
+    const wineTank = document.querySelector("#wine-tank");
+    const wineCurve = document.querySelector("#wine-curve");
     
-    if (!percentText || !preloader || !wineContainer) return;
+    if (!percentText || !preloader || !wineTank || !wineCurve) return;
 
-    // 1. Constant horizontal "slosh"
-    gsap.to(wave, {
-        xPercent: -50,
-        repeat: -1,
-        duration: 2.5,
-        ease: "linear"
+    // 1. Setup the Wave Parallax (Horizontal slosh)
+    const waves = document.querySelectorAll(".parallax use");
+    waves.forEach((wave, i) => {
+        gsap.to(wave, {
+            x: i % 2 === 0 ? -90 : 85,
+            repeat: -1,
+            duration: 2 + (i * 1), // Each layer moves at a different speed
+            ease: "sine.inOut",
+            yoyo: true
+        });
     });
 
-    // 2. The Smooth Fluid Rise (One long, 4-second pour)
-    gsap.to(wineContainer, {
-        height: "100%",
-        duration: 2.2,
-        ease: "power1.inOut"
-    });
-
-    // 3. The 6-Step Number Logic
-    const steps = [
-        Math.floor(Math.random() * 15) + 5,   // Step 1
-        Math.floor(Math.random() * 15) + 25,  // Step 2
-        Math.floor(Math.random() * 15) + 45,  // Step 3
-        Math.floor(Math.random() * 10) + 65,  // Step 4
-        Math.floor(Math.random() * 10) + 85,  // Step 5
-        100                                   // Step 6
-    ];
-
+    // 2. The Faster Unified Rise (2.5 seconds)
     const tl = gsap.timeline();
 
+    tl.to([wineTank, wineCurve], {
+        bottom: (index, target) => target === wineCurve ? "100%" : "0%", // Curve goes to top, tank stays bottom
+        height: (index, target) => target === wineTank ? "100%" : "120px",
+        duration: 2.5,
+        ease: "power2.inOut"
+    }, 0);
+
+    // 3. Percentage Sync
+    const steps = [20, 45, 65, 82, 95, 100];
     steps.forEach((step, index) => {
         tl.to(percentText, {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
             ease: "none"
-        }, "+=0.3"); // The pause between number updates
+        }, index * 0.4);
     });
 
-    // 4. The Reveal
+    // 4. Clean Reveal
     tl.to(preloader, {
         yPercent: -100,
-        duration: 1.5,
+        duration: 0.8,
         ease: "expo.inOut",
-        delay: 0.5,
+        delay: 0.2,
         onComplete: () => {
             preloader.style.display = "none";
-            if (typeof init === "function") init();
+            if (typeof window.init === "function") window.init();
         }
     });
 }
