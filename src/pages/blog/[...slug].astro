@@ -5,34 +5,21 @@ import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 // 1. Get the slug from the URL
 const { slug } = Astro.params;
 
+const WP_GRAPHQL_URL = import.meta.env.WORDPRESS_API_URL;
 // 2. Fetch only THIS specific post from WordPress
-const response = await fetch("hhttp://89.168.120.151/glintajans/graphql", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
+const response = await fetch(WP_GRAPHQL_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     query: `
-      query getPostBySlug($id: ID!) {
-        post(id: $id, idType: SLUG) {
-          slug
+      query GetWorkBySlug($slug: ID!) {
+        work(id: $slug, idType: SLUG) {
           title
-          content
-          date
-          excerpt
-          featuredImage {
-            node {
-              mediaItemUrl
-              altText
-            }
-          }
-          author {
-            node {
-              name
-            }
-          }
+          content 
         }
       }
     `,
-    variables: { id: slug },
+    variables: { slug },
   }),
 });
 if (!response.ok) {
