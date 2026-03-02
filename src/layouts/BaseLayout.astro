@@ -95,15 +95,15 @@ function cursorFollowerActive() {
        </div>
     </div>
 
-    <svg class="absolute left-0 w-[200%] h-[200px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -198px;">
+    <svg class="absolute left-0 w-[200%] h-[300px] z-30 pointer-events-none origin-bottom scale-y-[1.8]" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -295px;">
       <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        <path id="gentle-wave" d="M-160 44c30 0 58-25 88-25s 58 25 88 25 58-25 88-25 58 25 88 25 v44h-352z" />
       </defs>
       <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-        <use xlink:href="#gentle-wave" x="60" y="3" fill="rgba(128, 0, 32, 0.5)" />
-        <use xlink:href="#gentle-wave" x="72" y="5" fill="rgba(128, 0, 32, 0.8)" />
-        <use xlink:href="#gentle-wave" x="84" y="7" fill="#800020" />
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
+        <use xlink:href="#gentle-wave" x="48" y="6" fill="rgba(128, 0, 32, 0.7)" />
+        <use xlink:href="#gentle-wave" x="48" y="9" fill="#800020" />
       </g>
     </svg>
   </div>
@@ -126,23 +126,23 @@ function initLoader() {
     
     if (!bgPercent || !fgPercent || !wineWrapper) return;
 
-    // 1. DYNAMIC WAVE ANIMATION
+    // 1. TURBULENT WAVE ANIMATION
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
-        // Horizontal slosh
+        // Chaotic horizontal movement
         gsap.to(wave, {
-            x: i % 2 === 0 ? -120 : 100, // Wider movement
+            x: i % 2 === 0 ? -150 : 120, 
             repeat: -1,
-            duration: 2 + (i * 0.8),
+            duration: 1.5 + (i * 0.4), // Different speeds for each layer
             ease: "sine.inOut",
             yoyo: true
         });
         
-        // Vertical "Bounce" to make it less flat
+        // Aggressive vertical oscillation
         gsap.to(wave, {
-            attr: { y: i % 2 === 0 ? 8 : 2 },
+            attr: { y: i * 3 }, // Forces them to stay at different vertical levels
             repeat: -1,
-            duration: 1.5 + (i * 0.5),
+            duration: 1 + (i * 0.3),
             ease: "sine.inOut",
             yoyo: true
         });
@@ -157,7 +157,7 @@ function initLoader() {
     }, 0);
 
     // 3. PERCENTAGE SYNC
-    const steps = [15, 38, 62, 84, 96, 100];
+    const steps = [18, 42, 65, 88, 97, 100];
     steps.forEach((step, index) => {
         tl.to([bgPercent, fgPercent], {
             innerText: step,
@@ -172,7 +172,7 @@ function initLoader() {
         yPercent: -100,
         duration: 0.8,
         ease: "expo.inOut",
-        delay: 0.3,
+        delay: 0.2,
         onComplete: () => {
             preloader.style.display = "none";
             if (typeof window.init === "function") window.init();
