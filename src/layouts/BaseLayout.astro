@@ -78,7 +78,13 @@ function cursorFollowerActive() {
 	</head>
 	<body class="bg-slate-50">
 <div id="preloader" class="fixed inset-0 z-[100] flex items-end justify-start p-12 bg-[#f4f4f4] overflow-hidden">
-  <div id="wine-fill" class="absolute bottom-0 left-0 w-full bg-[#800020] z-0" style="height: 0%;"></div>
+  <div id="wine-container" class="absolute bottom-0 left-0 w-full bg-[#800020] z-0" style="height: 0%;">
+    <div class="absolute top-0 left-0 w-[200%] h-20 -translate-y-full">
+      <svg class="wine-wave" viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 100%; fill: #800020;">
+        <path d="M0,0 C300,0 300,120 600,120 C900,120 900,0 1200,0 L1200,120 L0,120 Z"></path>
+      </svg>
+    </div>
+  </div>
   
   <div class="absolute inset-0 opacity-20 pointer-events-none grain-bg z-10"></div>
   
@@ -100,14 +106,26 @@ function cursorFollowerActive() {
 function initLoader() {
     const percentText = document.querySelector("#loader-percent");
     const preloader = document.querySelector("#preloader");
-    const wineFill = document.querySelector("#wine-fill");
+    const wineContainer = document.querySelector("#wine-container");
+    const wave = document.querySelector(".wine-wave");
     
-    if (!percentText || !preloader || !wineFill) return;
+    if (!percentText || !preloader || !wineContainer) return;
 
-    const step1 = Math.floor(Math.random() * 25) + 5;
-    const step2 = Math.floor(Math.random() * 25) + 40;
-    const step3 = Math.floor(Math.random() * 20) + 75;
-    const steps = [step1, step2, step3, 100];
+    // 1. Constant horizontal "slosh"
+    gsap.to(wave, {
+        xPercent: -50,
+        repeat: -1,
+        duration: 3,
+        ease: "linear"
+    });
+
+    // 2. The 4-step random rise
+    const steps = [
+        Math.floor(Math.random() * 25) + 5,
+        Math.floor(Math.random() * 25) + 40,
+        Math.floor(Math.random() * 20) + 75,
+        100
+    ];
 
     const tl = gsap.timeline();
 
@@ -116,28 +134,27 @@ function initLoader() {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
-            ease: "none",
             onStart: () => {
-                // Animate the "Wine" rising
-                gsap.to(wineFill, { 
+                // The vertical rise feels fluid with power2 easing
+                gsap.to(wineContainer, { 
                     height: `${step}%`, 
-                    duration: 0.8, 
-                    ease: "power2.out" 
+                    duration: 1.2, 
+                    ease: "power2.inOut" 
                 });
             }
-        }, "+=0.6");
+        }, "+=0.7");
     });
 
-    // Fade out the whole preloader after it's full
+    // 3. Clean Reveal
     tl.to(preloader, {
         opacity: 0,
-        display: "none",
         duration: 1,
         ease: "power2.inOut",
-        delay: 0.5
-    })
-    .call(() => {
-        if (typeof init === "function") init();
+        delay: 0.5,
+        onComplete: () => {
+            preloader.style.display = "none";
+            if (typeof init === "function") init();
+        }
     });
 }
 
