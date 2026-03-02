@@ -106,56 +106,39 @@ function cursorFollowerActive() {
 function initLoader() {
     const percentText = document.querySelector("#loader-percent");
     const preloader = document.querySelector("#preloader");
-    const wineContainer = document.querySelector("#wine-container");
-    const wave = document.querySelector(".wine-wave");
+    const wineFill = document.querySelector("#wine-fill");
     
-    if (!percentText || !preloader || !wineContainer) return;
-
-    // 1. Constant horizontal "slosh"
-    gsap.to(wave, {
-        xPercent: -50,
-        repeat: -1,
-        duration: 2.5,
-        ease: "linear"
-    });
-
-    // 2. The Smooth Fluid Rise (One long, 4-second pour)
-    gsap.to(wineContainer, {
-        height: "100%",
-        duration: 4.5,
-        ease: "power1.inOut"
-    });
-
-    // 3. The 6-Step Number Logic
-    const steps = [
-        Math.floor(Math.random() * 15) + 5,   // Step 1
-        Math.floor(Math.random() * 15) + 25,  // Step 2
-        Math.floor(Math.random() * 15) + 45,  // Step 3
-        Math.floor(Math.random() * 10) + 65,  // Step 4
-        Math.floor(Math.random() * 10) + 85,  // Step 5
-        100                                   // Step 6
-    ];
+    if (!percentText || !preloader || !wineFill) return;
 
     const tl = gsap.timeline();
 
+    // 1. Faster Liquid Rise (Reduced to 2.5 seconds)
+    tl.to(wineFill, {
+        height: "100%",
+        duration: 2.5,
+        ease: "power2.inOut" // Power2 gives it a more aggressive start/stop
+    }, 0);
+
+    // 2. Faster 6-Step Counter
+    const steps = [22, 45, 61, 78, 92, 100];
     steps.forEach((step, index) => {
         tl.to(percentText, {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
             ease: "none"
-        }, "+=0.6"); // The pause between number updates
+        }, index * 0.4); // Faster intervals (0.4s instead of 0.7s)
     });
 
-    // 4. The Reveal
+    // 3. Quicker Reveal Transition
     tl.to(preloader, {
         yPercent: -100,
-        duration: 1.5,
+        duration: 0.8, // Snappier slide out
         ease: "expo.inOut",
-        delay: 0.5,
+        delay: 0.2,
         onComplete: () => {
             preloader.style.display = "none";
-            if (typeof init === "function") init();
+            if (typeof window.init === "function") window.init();
         }
     });
 }
