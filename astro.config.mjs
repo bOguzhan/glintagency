@@ -46,7 +46,8 @@ export default defineConfig({
 		mdx(),
 		icon(),
 	],
-	image: {
+image: {
+  domains: ['89.168.120.151'],
   service: { entrypoint: 'astro/assets/services/noop' }
-}
+},
 });
