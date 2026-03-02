@@ -2,57 +2,71 @@
 import type { AstroSeoProps } from "@astrolib/seo";
 import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 
-// 1. Get the slug from the URL
 const { slug } = Astro.params;
 
-const WP_GRAPHQL_URL = import.meta.env.WORDPRESS_API_URL;
-// 2. Fetch only THIS specific post from WordPress
+// Use a fallback URL if the .env isn't loading yet to test
+const WP_GRAPHQL_URL = import.meta.env.WORDPRESS_API_URL || "http://127.0.0.1/glintajans/graphql";
+
 const response = await fetch(WP_GRAPHQL_URL, {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 
+    'Content-Type': 'application/json',
+    'User-Agent': 'Astro-Server-Fetch' 
+  },
   body: JSON.stringify({
     query: `
       query GetWorkBySlug($slug: ID!) {
         work(id: $slug, idType: SLUG) {
           title
-          content 
+          content
+          slug
+          date
+          excerpt
+          featuredImage {
+            node {
+              mediaItemUrl
+              altText
+            }
+          }
         }
       }
     `,
     variables: { slug },
   }),
 });
+
 if (!response.ok) {
   const text = await response.text();
-  console.error("WP Error Content:", text); // This will show in your terminal
+  console.error("WP Error Content:", text.slice(0, 300)); 
   throw new Error(`Wordpress returned ${response.status}`);
 }
-const { data } = await response.json();
-const post = data?.post;
 
-// 3. Handle 404 if post doesn't exist
+const json = await response.json();
+// FIXED: Changed data.post to data.work to match your query
+const post = json.data?.work;
+
 if (!post) {
+  console.log(`Post not found for slug: ${slug}`);
   return Astro.redirect('/404');
 }
 
-// 4. Map data to your layout
 const frontmatter = {
   title: post.title,
-  description: post.excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160),
+  description: post.excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160) || "",
   author: {
-    name: post.author?.node?.name || "Admin",
+    name: "Admin",
     link: "#" 
   },
-  pubDate: post.date,
+  pubDate: post.date || new Date().toISOString(),
   image: {
-    url: post.featuredImage?.node?.mediaItemUrl,
+    url: post.featuredImage?.node?.mediaItemUrl || "",
     alt: post.featuredImage?.node?.altText || post.title
   }
 };
 
 const seo: AstroSeoProps = {
   title: post.title,
-  canonical: `https://glintajans.com/blog/${post.slug}/`,
+  canonical: `http://89.168.120.151/blog/${post.slug}/`,
   openGraph: {
     title: post.title,
     images: [{ url: post.featuredImage?.node?.mediaItemUrl || "" }],
@@ -61,6 +75,5 @@ const seo: AstroSeoProps = {
 ---
 
 <MarkdownPostLayout frontmatter={frontmatter} seo={seo}>
-  {/* Inject the WordPress HTML content directly */}
   <article set:html={post.content} />
 </MarkdownPostLayout>
