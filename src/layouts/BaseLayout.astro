@@ -77,6 +77,14 @@ function cursorFollowerActive() {
 		<AstroSeo {...seo} />
 	</head>
 	<body class="bg-slate-50">
+		<div id="preloader" class="fixed inset-0 z-[100] flex items-end justify-start p-12 bg-[#f4f4f4] overflow-hidden">
+  <div class="absolute inset-0 opacity-20 pointer-events-none grain-bg"></div>
+  
+  <div class="relative z-10 flex items-baseline">
+    <span id="loader-percent" class="text-[15vw] font-medium leading-none tracking-tighter">0</span>
+    <span class="text-[5vw] font-light ml-2">%</span>
+  </div>
+</div>
 		<BackgroundTexture />
 		<Navigation />
 		{cursorFollowerActive() && <BlobCursorFollower />}
@@ -85,8 +93,34 @@ function cursorFollowerActive() {
 		<div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
 
 <script>
+	
   import { gsap } from "gsap";
+	function initLoader() {
+    	const percentText = document.querySelector("#loader-percent");
+    	const preloader = document.querySelector("#preloader");
+    
+   		let loaderValue = { val: 0 };
+    	const tl = gsap.timeline();
 
+    	tl.to(loaderValue, {
+        	val: 100,
+        	duration: 2.5, // Adjust for how long you want the load to feel
+        	ease: "power2.inOut",
+        	onUpdate: () => {
+            	percentText.innerText = Math.floor(loaderValue.val);
+        }
+    })
+    // Lift the curtain (The Glint Reveal)
+    	.to(preloader, {
+        	yPercent: -100,
+        	duration: 1,
+        	ease: "expo.inOut"
+    	})
+    	// Start your hero animations (SplitText etc.) only AFTER reveal
+    	.call(() => {
+        	init(); // This calls your existing hero animation function
+    });
+}
   const container = document.getElementById('sparkle-container');
 
   // Weighted color array: 3 Burgundy for every 1 Gold
