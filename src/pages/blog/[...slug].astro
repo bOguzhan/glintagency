@@ -6,7 +6,7 @@ import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 const { slug } = Astro.params;
 
 // 2. Fetch only THIS specific post from WordPress
-const response = await fetch("http://localhost/glintajans/graphql", {
+const response = await fetch("hhttp://89.168.120.151/glintajans/graphql", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
