@@ -89,9 +89,8 @@ function cursorFollowerActive() {
 
   const container = document.getElementById('sparkle-container');
 
-  // Sparkle configuration
-  const sparkleCount = 1; // Number of sparkles per move event
-  const colors = ["#FFD700", "#FFFACD", "#FFFFFF", "#F0E68C"]; // Gold/White glints
+  // Weighted color array: 3 Burgundy for every 1 Gold
+  const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
 
   window.addEventListener("mousemove", (e) => {
     createSparkle(e.clientX, e.clientY);
@@ -100,11 +99,10 @@ function cursorFollowerActive() {
   function createSparkle(x, y) {
     const sparkle = document.createElement("div");
     
-    // Randomize size and color
-    const size = Math.random() * 8 + 4;
+    // Increased size: now 12px to 24px (previously 4-12px)
+    const size = Math.random() * 12 + 12; 
     const color = colors[Math.floor(Math.random() * colors.length)];
 
-    // Basic styling for the sparkle
     Object.assign(sparkle.style, {
       position: "absolute",
       left: `${x}px`,
@@ -112,23 +110,24 @@ function cursorFollowerActive() {
       width: `${size}px`,
       height: `${size}px`,
       backgroundColor: color,
-      borderRadius: "50%", // Use a star-shape clip-path for more "glint"
-      clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
-      pointerEvents: "none"
+      // 4-pointed star (diamond glint) for a sharper "Glint" look
+      clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
+      pointerEvents: "none",
+      zIndex: "9999"
     });
 
     container.appendChild(sparkle);
 
     // GSAP Animation
     gsap.to(sparkle, {
-      duration: Math.random() * 1 + 0.5,
-      x: (Math.random() - 0.5) * 100, // Random horizontal drift
-      y: (Math.random() - 0.5) * 100, // Random vertical drift
-      rotation: Math.random() * 360,
+      duration: Math.random() * 0.8 + 0.6,
+      x: (Math.random() - 0.5) * 150, // Wider spread
+      y: (Math.random() - 0.5) * 150,
+      rotation: Math.random() * 180,
       scale: 0,
       opacity: 0,
-      ease: "power2.out",
-      onComplete: () => sparkle.remove() // Clean up DOM
+      ease: "power1.out",
+      onComplete: () => sparkle.remove()
     });
   }
 </script>
