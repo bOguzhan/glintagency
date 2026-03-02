@@ -27,7 +27,7 @@ const translatePath = useTranslatedPath(lang);
 				<div class="flex flex-col items-center justify-center gap-3 lg:col-start-1">
 					<div class="squircle-bg rounded-lg bg-zinc-900" data-cursor-hover data-cursor-parallax>
 						<a
-							class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
+							class="hero-button flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
 							aria-label="Contact Page"
 							href={translatePath("/contact/")}>
 							{t("contact")}
@@ -104,7 +104,7 @@ const translatePath = useTranslatedPath(lang);
 		const parentSplit = new SplitText(".hero h1", {
 			linesClass: "split-parent",
 		});
-const contactBtn = document.querySelector('.hero button'); // Ensure this matches your class
+const contactBtn = document.querySelector('.hero-button'); // Ensure this matches your class
 
 if (contactBtn) {
     // Create the heartbeat timeline
