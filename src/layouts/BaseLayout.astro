@@ -46,42 +46,32 @@ function cursorFollowerActive() {
         <AstroSeo {...seo} />
     </head>
     <body class="bg-slate-50">
-        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
-            
-            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
-            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
+<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
+  
+  <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
+  <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
 
-            <div id="loader-content" class="relative z-30 w-full h-full flex items-center justify-center">
-                
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                    <div class="flex items-baseline text-black">
-                        <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
-                        <span class="text-[5vw] font-light ml-2">%</span>
-                    </div>
-                </div>
+  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
+    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
+      <defs>
+        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
+        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
+        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
+      </g>
+    </svg>
+  </div>
 
-                <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
-                    <div class="absolute inset-0 w-screen h-screen flex items-center justify-center pointer-events-none">
-                        <div class="flex items-baseline text-white">
-                            <span id="loader-percent-fg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
-                            <span class="text-[5vw] font-light ml-2">%</span>
-                        </div>
-                    </div>
-
-                    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
-                        <defs>
-                            <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
-                        </defs>
-                        <g class="parallax">
-                            <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
-                            <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
-                            <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
-                            <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
-                        </g>
-                    </svg>
-                </div>
-            </div>
-        </div>
+  <div id="loader-content" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+    <div class="flex items-baseline text-black mix-blend-difference">
+      <span id="loader-percent" class="text-[18vw] font-black text-white leading-none tracking-tighter">0</span>
+      <span class="text-[5vw] font-light text-white ml-2">%</span>
+    </div>
+  </div>
+</div>
 
         <BackgroundTexture />
         <Navigation />
@@ -94,78 +84,74 @@ function cursorFollowerActive() {
   import { gsap } from "gsap";
 
   function initLoader() {
-    const bgPercent = document.querySelector("#loader-percent-bg");
-    const fgPercent = document.querySelector("#loader-percent-fg");
+    const percentText = document.querySelector("#loader-percent");
     const wineWrapper = document.querySelector("#wine-wrapper");
     const preloader = document.querySelector("#preloader");
     const preloaderTop = document.querySelector("#preloader-top");
     const preloaderBottom = document.querySelector("#preloader-bottom");
     const loaderContent = document.querySelector("#loader-content");
     
-    if (!bgPercent || !fgPercent || !wineWrapper || !preloaderTop || !preloaderBottom) return;
+    if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
     // 1. WAVE PARALLAX
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
         gsap.to(wave, {
-            x: i % 2 === 0 ? -40 : 30,
+            x: i % 2 === 0 ? -45 : 35,
             repeat: -1,
-            duration: 0.8 + (i * 0.3),
+            duration: 0.7 + (i * 0.2),
             ease: "sine.inOut",
-            yoyo: true
-        });
-        gsap.to(wave, {
-            attr: { y: 2 + (i * 2) },
-            repeat: -1,
-            duration: 1 + (i * 0.2),
-            ease: "power1.inOut",
             yoyo: true
         });
     });
 
-    // 2. TIMELINE ANIMATION
+    // 2. TIMELINE
     const tl = gsap.timeline();
     
-    // Rise & Counter Parallel
+    // Wine Rise
     tl.to(wineWrapper, {
         height: "100%",
-        duration: 2.5,
+        duration: 2.2,
         ease: "power2.inOut"
     }, 0);
 
-    const steps = [20, 48, 72, 89, 96, 100];
+    // Single Counter Steps
+    const steps = [18, 42, 65, 84, 96, 100];
     steps.forEach((step, index) => {
-        tl.to([bgPercent, fgPercent], {
+        tl.to(percentText, {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
             ease: "none"
-        }, index * 0.4);
+        }, index * 0.35);
     });
 
-    // 3. THE SPLIT EXIT
+    // 3. FADE & SPLIT REVEAL
+    // Fade out the counter
     tl.to(loaderContent, {
         opacity: 0,
-        duration: 0.4,
+        duration: 0.5,
         ease: "power2.out"
     });
 
+    // Split the panels
     tl.to(preloaderTop, {
         yPercent: -100,
-        duration: 1.2,
+        duration: 1.1,
         ease: "expo.inOut"
     }, "-=0.2");
 
     tl.to(preloaderBottom, {
         yPercent: 100,
-        duration: 1.2,
+        duration: 1.1,
         ease: "expo.inOut",
         onComplete: () => {
             preloader.style.display = "none";
+            // Check if global init exists before calling
             if (typeof window.init === "function") window.init();
         }
     }, "<"); 
-  }
+}
 
   // Sparkle Logic
   const container = document.getElementById('sparkle-container');
