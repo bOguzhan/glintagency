@@ -25,14 +25,19 @@ const translatePath = useTranslatedPath(lang);
 					{t("hero.subtitle")}
 				</p>
 				<div class="flex flex-col items-center justify-center gap-3 lg:col-start-1">
-					<div class="squircle-bg rounded-lg bg-transparent" data-cursor-hover data-cursor-parallax>
-						<a
-							class="hero-button flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
-							aria-label="Contact Page"
-							href={translatePath("/contact/")}>
-							{t("contact")}
-						</a>
-					</div>
+    <div class="magnetic-wrap p-12"> 
+        <div class="magnetic-content squircle-bg rounded-lg bg-zinc-900 border border-transparent hover:border-[#FFD700]/30 transition-colors" 
+             data-cursor-hover 
+             data-cursor-parallax>
+            <a
+                class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
+                aria-label="Contact Page"
+                href={translatePath("/contact/")}>
+                {t("contact")}
+            </a>
+        </div>
+    </div>
+</div>
 
 					<small>
 						{t("or")}
@@ -105,63 +110,6 @@ const translatePath = useTranslatedPath(lang);
 			linesClass: "split-parent",
 		});
 
-const contactBtn = document.querySelector('.hero-button'); 
-
-if (contactBtn) {
-    // Ensure it starts as a pill
-    gsap.set(contactBtn, { borderRadius: "9999px" });
-
-    let heartbeat = gsap.timeline({ repeat: -1, paused: true });
-    
-    heartbeat
-        // The "Lub" (Primary Pulse)
-        .to(contactBtn, { 
-            scale: 1.08, 
-            backgroundColor: "#b51f3a", 
-            borderColor: "#b51f3a",
-            color: "#fff",
-            duration: 0.25, 
-            ease: "power2.out" 
-        })
-        .to(contactBtn, { scale: 1.0, duration: 0.35, ease: "power2.inOut" })
-        // The "Dub" (Secondary Pulse)
-        .to(contactBtn, { 
-            scale: 1.04, 
-            duration: 0.2, 
-            ease: "power2.out" 
-        }, "+=0.15")
-        // The "Rest" (Relaxed 1.0 decay)
-        .to(contactBtn, { scale: 1.0, duration: 1.0, ease: "power2.inOut" });
-
-    window.addEventListener("mousemove", (e) => {
-        const rect = contactBtn.getBoundingClientRect();
-        const btnX = rect.left + rect.width / 2;
-        const btnY = rect.top + rect.height / 2;
-        const distance = Math.hypot(e.clientX - btnX, e.clientY - btnY);
-        
-        if (distance < 500) {
-            heartbeat.play();
-            const speed = gsap.utils.mapRange(0, 500, 1.2, 0.7, distance);
-            gsap.to(heartbeat, { timeScale: speed, duration: 0.5 });
-            
-            // Rounded Glow Aura
-            const glowSize = gsap.utils.mapRange(0, 500, 50, 0, distance);
-            gsap.to(contactBtn, { 
-                boxShadow: `0 0 ${glowSize}px rgba(181, 31, 58, 0.5)`,
-                duration: 0.4 
-            });
-        } else {
-            gsap.to(heartbeat, { timeScale: 0.7, duration: 1.5 });
-            gsap.to(contactBtn, { 
-                backgroundColor: "#000", 
-                boxShadow: "0 0 0px rgba(181, 31, 58, 0)",
-                borderColor: "rgba(255, 255, 255, 0.1)",
-                duration: 1.0 
-            });
-            if (distance > 700) heartbeat.pause();
-        }
-    });
-}
 		gsap.timeline()
 			.from(childSplit.lines, {
 				duration: 1.5,
@@ -203,4 +151,39 @@ if (contactBtn) {
 
 	document.removeEventListener("DOMContentLoaded", init); // astro:page-load
 	document.addEventListener("DOMContentLoaded", init); // astro:page-load
+</script>
+<script>
+  import { gsap } from "gsap";
+
+  const wraps = document.querySelectorAll('.magnetic-wrap');
+
+  wraps.forEach((wrap) => {
+    const content = wrap.querySelector('.magnetic-content');
+    
+    wrap.addEventListener('mousemove', (e) => {
+      const rect = wrap.getBoundingClientRect();
+      
+      // Calculate distance from center of the wrapper
+      const relX = e.clientX - rect.left;
+      const relY = e.clientY - rect.top;
+      const x = (relX - rect.width / 2) * 0.4; // 0.4 is the "strength" of the pull
+      const y = (relY - rect.height / 2) * 0.4;
+
+      gsap.to(content, {
+        x: x,
+        y: y,
+        duration: 0.5,
+        ease: "power2.out"
+      });
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      gsap.to(content, {
+        x: 0,
+        y: 0,
+        duration: 0.8,
+        ease: "elastic.out(1, 0.3)" // That premium snap-back feel
+      });
+    });
+  });
 </script>
