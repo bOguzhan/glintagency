@@ -46,161 +46,166 @@ function cursorFollowerActive() {
         <AstroSeo {...seo} />
     </head>
     <body class="bg-slate-50">
-<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
-  
-  <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
-  <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
+        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-white">
+            
+            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10"></div>
+            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10"></div>
 
-  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
-    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
-      <defs>
-        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
-      </defs>
-      <g class="parallax">
-        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
-        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
-        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
-      </g>
-    </svg>
-  </div>
+            <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
+                <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
+                    <defs>
+                        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
+                    </defs>
+                    <g class="parallax">
+                        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+                        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
+                        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
+                        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
+                    </g>
+                </svg>
+            </div>
 
-  <div id="loader-content" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-    <div class="flex items-baseline text-black mix-blend-difference">
-      <span id="loader-percent" class="text-[18vw] font-black text-white leading-none tracking-tighter">0</span>
-      <span class="text-[5vw] font-light text-white ml-2">%</span>
-    </div>
-  </div>
-</div>
+            <div id="loader-content" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+                <div class="flex items-baseline text-white">
+                    <span id="loader-percent" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+                    <span class="text-[5vw] font-light ml-2">%</span>
+                </div>
+            </div>
+        </div>
 
         <BackgroundTexture />
         <Navigation />
         {cursorFollowerActive() && <BlobCursorFollower />}
         <slot />
         <Footer />
+        
         <div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
 
-<script>
-  import { gsap } from "gsap";
+        <script>
+            import { gsap } from "gsap";
 
-  function initLoader() {
-    const percentText = document.querySelector("#loader-percent");
-    const wineWrapper = document.querySelector("#wine-wrapper");
-    const preloader = document.querySelector("#preloader");
-    const preloaderTop = document.querySelector("#preloader-top");
-    const preloaderBottom = document.querySelector("#preloader-bottom");
-    const loaderContent = document.querySelector("#loader-content");
-    
-    if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
+            function initLoader() {
+                const percentText = document.querySelector("#loader-percent");
+                const wineWrapper = document.querySelector("#wine-wrapper");
+                const wineCurve = document.querySelector("#wine-curve");
+                const preloader = document.querySelector("#preloader");
+                const preloaderTop = document.querySelector("#preloader-top");
+                const preloaderBottom = document.querySelector("#preloader-bottom");
+                const loaderContent = document.querySelector("#loader-content");
+                
+                if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-    // 1. WAVE PARALLAX
-    const waves = document.querySelectorAll(".parallax use");
-    waves.forEach((wave, i) => {
-        gsap.to(wave, {
-            x: i % 2 === 0 ? -45 : 35,
-            repeat: -1,
-            duration: 0.7 + (i * 0.2),
-            ease: "sine.inOut",
-            yoyo: true
-        });
-    });
+                // 1. CHOPPY WAVE ANIMATION
+                const waves = document.querySelectorAll(".parallax use");
+                waves.forEach((wave, i) => {
+                    gsap.to(wave, {
+                        x: i % 2 === 0 ? -45 : 35,
+                        repeat: -1,
+                        duration: 0.7 + (i * 0.2),
+                        ease: "sine.inOut",
+                        yoyo: true
+                    });
+                });
 
-    // 2. TIMELINE
-    const tl = gsap.timeline();
-    
-    // Wine Rise
-    tl.to(wineWrapper, {
-        height: "100%",
-        duration: 2.2,
-        ease: "power2.inOut"
-    }, 0);
+                // 2. MAIN TIMELINE
+                const tl = gsap.timeline();
+                
+                // Rise
+                tl.to(wineWrapper, {
+                    height: "100%",
+                    duration: 2.2,
+                    ease: "power2.inOut"
+                }, 0);
 
-    // Single Counter Steps
-    const steps = [18, 42, 65, 84, 96, 100];
-    steps.forEach((step, index) => {
-        tl.to(percentText, {
-            innerText: step,
-            duration: 0.1,
-            snap: { innerText: 1 },
-            ease: "none"
-        }, index * 0.35);
-    });
+                // Percentage Sync
+                const steps = [18, 42, 65, 84, 96, 100];
+                steps.forEach((step, index) => {
+                    tl.to(percentText, {
+                        innerText: step,
+                        duration: 0.1,
+                        snap: { innerText: 1 },
+                        ease: "none"
+                    }, index * 0.35);
+                });
 
-    // 3. THE REVEAL FIX
-    // Fade the counter AND the solid wine wrapper so we can see the panels behind/underneath
-    tl.to([loaderContent, wineWrapper], {
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.out"
-    });
+                // 3. SEAMLESS SPLIT EXIT
+                // Fade waves and text just as the screen is full burgundy
+                tl.to([loaderContent, wineCurve], {
+                    opacity: 0,
+                    duration: 0.4,
+                    ease: "power1.in"
+                });
 
-    // Now the split will be visible because the wine is gone
-    tl.to(preloaderTop, {
-        yPercent: -100,
-        duration: 1.1,
-        ease: "expo.inOut"
-    }, "-=0.3");
+                // Handover fill to panels
+                tl.set(wineWrapper, { display: "none" }, "+=0.1");
 
-    tl.to(preloaderBottom, {
-        yPercent: 100,
-        duration: 1.1,
-        ease: "expo.inOut",
-        onComplete: () => {
-            preloader.style.display = "none";
-            if (typeof window.init === "function") window.init();
-        }
-    }, "<"); 
-}
+                // Split curtains
+                tl.to(preloaderTop, {
+                    yPercent: -100,
+                    duration: 1.1,
+                    ease: "expo.inOut"
+                }, "<"); 
 
-  // Sparkle Logic
-  const container = document.getElementById('sparkle-container');
-  const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
-  window.addEventListener("mousemove", (e) => {
-    if(container) createSparkle(e.clientX, e.clientY);
-  });
+                tl.to(preloaderBottom, {
+                    yPercent: 100,
+                    duration: 1.1,
+                    ease: "expo.inOut",
+                    onComplete: () => {
+                        preloader.style.display = "none";
+                        if (typeof window.init === "function") window.init();
+                    }
+                }, "<"); 
+            }
 
-  function createSparkle(x, y) {
-    const sparkle = document.createElement("div");
-    const size = Math.random() * 8 + 8; 
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    Object.assign(sparkle.style, {
-      position: "absolute",
-      left: `${x}px`,
-      top: `${y}px`,
-      width: `${size}px`,
-      height: `${size}px`,
-      backgroundColor: color,
-      clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
-      pointerEvents: "none",
-      zIndex: "9999"
-    });
-    container.appendChild(sparkle);
-    gsap.to(sparkle, {
-      duration: 0.8,
-      x: (Math.random() - 0.5) * 100, 
-      y: (Math.random() - 0.5) * 100,
-      scale: 0,
-      opacity: 0,
-      ease: "power1.out",
-      onComplete: () => sparkle.remove()
-    });
-  }
+            // Sparkle Cursor Logic
+            const container = document.getElementById('sparkle-container');
+            const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
+            window.addEventListener("mousemove", (e) => {
+                if(container) createSparkle(e.clientX, e.clientY);
+            });
 
-  document.addEventListener("DOMContentLoaded", initLoader);
-</script>
+            function createSparkle(x, y) {
+                const sparkle = document.createElement("div");
+                const size = Math.random() * 8 + 8; 
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                Object.assign(sparkle.style, {
+                    position: "absolute",
+                    left: `${x}px`,
+                    top: `${y}px`,
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    backgroundColor: color,
+                    clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
+                    pointerEvents: "none",
+                    zIndex: "9999"
+                });
+                container.appendChild(sparkle);
+                gsap.to(sparkle, {
+                    duration: 0.8,
+                    x: (Math.random() - 0.5) * 100, 
+                    y: (Math.random() - 0.5) * 100,
+                    scale: 0,
+                    opacity: 0,
+                    ease: "power1.out",
+                    onComplete: () => sparkle.remove()
+                });
+            }
 
-<script>
-  import Lenis from 'lenis'
-  import { gsap } from 'gsap'
-  import { ScrollTrigger } from 'gsap/ScrollTrigger'
-  const lenis = new Lenis({ duration: 1.2, smoothWheel: true })
-  lenis.on('scroll', ScrollTrigger.update)
-  gsap.ticker.add((time) => { lenis.raf(time * 1000) })
-</script>
+            document.addEventListener("DOMContentLoaded", initLoader);
+        </script>
 
-<style is:global>
-  html.lenis, html.lenis body { height: auto; }
-  .lenis.lenis-smooth { scroll-behavior: auto !important; }
-</style>
+        <script>
+            import Lenis from 'lenis'
+            import { gsap } from 'gsap'
+            import { ScrollTrigger } from 'gsap/ScrollTrigger'
+            const lenis = new Lenis({ duration: 1.2, smoothWheel: true })
+            lenis.on('scroll', ScrollTrigger.update)
+            gsap.ticker.add((time) => { lenis.raf(time * 1000) })
+        </script>
+
+        <style is:global>
+            html.lenis, html.lenis body { height: auto; }
+            .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        </style>
     </body>
 </html>
