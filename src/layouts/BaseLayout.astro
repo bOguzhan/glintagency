@@ -93,48 +93,52 @@ function cursorFollowerActive() {
 		<div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
 
 <script>
-	
   import { gsap } from "gsap";
-	function initLoader() {
-    	const percentText = document.querySelector("#loader-percent");
-    	const preloader = document.querySelector("#preloader");
-    
-   		let loaderValue = { val: 0 };
-    	const tl = gsap.timeline();
 
-    	tl.to(loaderValue, {
-        	val: 100,
-        	duration: 2.5, // Adjust for how long you want the load to feel
-        	ease: "power2.inOut",
-        	onUpdate: () => {
-            	percentText.innerText = Math.floor(loaderValue.val);
+  function initLoader() {
+    const percentText = document.querySelector("#loader-percent");
+    const preloader = document.querySelector("#preloader");
+    const loaderBar = document.querySelector("#loader-bar");
+    
+    // Safety check to prevent errors if elements are missing
+    if (!percentText || !preloader) return;
+
+    let loaderValue = { val: 0 };
+    const tl = gsap.timeline();
+
+    tl.to(loaderValue, {
+        val: 100,
+        duration: 2.5, 
+        ease: "power2.inOut",
+        onUpdate: () => {
+            percentText.innerText = Math.floor(loaderValue.val);
         }
     })
-	tl.to("#loader-bar", { width: "100%", duration: 2.5, ease: "power2.inOut" }, 0);
-    // Lift the curtain (The Glint Reveal)
-    	.to(preloader, {
-        	yPercent: -100,
-        	duration: 1,
-        	ease: "expo.inOut"
-    	})
-    	// Start your hero animations (SplitText etc.) only AFTER reveal
-    	.call(() => {
-        	init(); // This calls your existing hero animation function
+    // FIXED: Removed the semicolon that was here
+    .to(loaderBar, { width: "100%", duration: 2.5, ease: "power2.inOut" }, 0)
+    .to(preloader, {
+        yPercent: -100,
+        duration: 1,
+        ease: "expo.inOut"
+    })
+    .call(() => {
+        // Only call init if it exists globally or in this scope
+        if (typeof init === "function") {
+            init(); 
+        }
     });
-}
-  const container = document.getElementById('sparkle-container');
+  }
 
-  // Weighted color array: 3 Burgundy for every 1 Gold
+  // Sparkle Logic
+  const container = document.getElementById('sparkle-container');
   const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
 
   window.addEventListener("mousemove", (e) => {
-    createSparkle(e.clientX, e.clientY);
+    if(container) createSparkle(e.clientX, e.clientY);
   });
 
   function createSparkle(x, y) {
     const sparkle = document.createElement("div");
-    
-    // Increased size: now 12px to 24px (previously 4-12px)
     const size = Math.random() * 12 + 12; 
     const color = colors[Math.floor(Math.random() * colors.length)];
 
@@ -145,7 +149,6 @@ function cursorFollowerActive() {
       width: `${size}px`,
       height: `${size}px`,
       backgroundColor: color,
-      // 4-pointed star (diamond glint) for a sharper "Glint" look
       clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
       pointerEvents: "none",
       zIndex: "9999"
@@ -153,10 +156,9 @@ function cursorFollowerActive() {
 
     container.appendChild(sparkle);
 
-    // GSAP Animation
     gsap.to(sparkle, {
       duration: Math.random() * 0.8 + 0.6,
-      x: (Math.random() - 0.5) * 150, // Wider spread
+      x: (Math.random() - 0.5) * 150, 
       y: (Math.random() - 0.5) * 150,
       rotation: Math.random() * 180,
       scale: 0,
@@ -165,6 +167,9 @@ function cursorFollowerActive() {
       onComplete: () => sparkle.remove()
     });
   }
+
+  // Initialize the loader
+  document.addEventListener("DOMContentLoaded", initLoader);
 </script>
 <script>
   import Lenis from 'lenis'
