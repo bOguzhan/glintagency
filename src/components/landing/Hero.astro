@@ -109,17 +109,7 @@ const translatePath = useTranslatedPath(lang);
 		const parentSplit = new SplitText(".hero h1", {
 			linesClass: "split-parent",
 		});
-		gsap.from(childSplit.lines, {
-    duration: 1.5,
-    yPercent: 100,
-    color: "#b51f3a", // Starts Burgundy
-    ease: "power4",
-    stagger: 0.1,
-}).to(childSplit.lines, {
-    color: "#ffffff", // Fades to White as it settles
-    duration: 0.5,
-    stagger: 0.1
-}, "-=1.0");
+		
 		gsap.timeline()
 			.from(childSplit.lines, {
 				duration: 1.5,
