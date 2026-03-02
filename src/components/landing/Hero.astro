@@ -97,6 +97,30 @@ const translatePath = useTranslatedPath(lang);
 	gsap.registerPlugin(ScrollTrigger, SplitText, ScrollToPlugin);
 
 	function init() {
+		// Target the glow element and the main hero container
+const glow = document.querySelector('.hero-glow'); // Adjust selector to your glow div
+const heroContent = document.querySelector('.hero');
+
+window.addEventListener("mousemove", (e) => {
+    const { clientX, clientY } = e;
+    const xPos = (clientX / window.innerWidth - 0.5);
+    const yPos = (clientY / window.innerHeight - 0.5);
+
+    // The glow moves more aggressively than the text for depth
+    gsap.to(glow, {
+        duration: 1.2,
+        x: xPos * 50,
+        y: yPos * 50,
+        ease: "power2.out"
+    });
+
+    gsap.to(heroContent, {
+        duration: 0.8,
+        x: xPos * 20,
+        y: yPos * 20,
+        ease: "power2.out"
+    });
+});
 		const childSplit = new SplitText(".hero h1", {
 			type: "lines",
 			linesClass: "split-child",
