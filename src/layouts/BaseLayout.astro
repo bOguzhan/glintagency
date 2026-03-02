@@ -86,7 +86,7 @@ function cursorFollowerActive() {
      </div>
   </div>
 
-  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
+  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
     
     <div class="absolute bottom-0 left-0 w-screen h-screen flex items-center justify-center pointer-events-none">
        <div class="flex items-baseline text-white">
@@ -95,15 +95,15 @@ function cursorFollowerActive() {
        </div>
     </div>
 
-    <svg class="absolute left-0 w-full h-[120px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -119px;">
+    <svg class="absolute left-0 w-[200%] h-[200px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -198px;">
       <defs>
         <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
       </defs>
       <g class="parallax">
         <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.8)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="#800020" />
+        <use xlink:href="#gentle-wave" x="60" y="3" fill="rgba(128, 0, 32, 0.5)" />
+        <use xlink:href="#gentle-wave" x="72" y="5" fill="rgba(128, 0, 32, 0.8)" />
+        <use xlink:href="#gentle-wave" x="84" y="7" fill="#800020" />
       </g>
     </svg>
   </div>
@@ -121,17 +121,26 @@ function cursorFollowerActive() {
 function initLoader() {
     const bgPercent = document.querySelector("#loader-percent-bg");
     const fgPercent = document.querySelector("#loader-percent-fg");
-    const preloader = document.querySelector("#preloader");
     const wineWrapper = document.querySelector("#wine-wrapper");
-    const wineCurve = document.querySelector("#wine-curve");
+    const preloader = document.querySelector("#preloader");
     
-    if (!bgPercent || !fgPercent || !preloader || !wineWrapper) return;
+    if (!bgPercent || !fgPercent || !wineWrapper) return;
 
-    // 1. Wave Parallax
+    // 1. DYNAMIC WAVE ANIMATION
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
+        // Horizontal slosh
         gsap.to(wave, {
-            x: i % 2 === 0 ? -90 : 85,
+            x: i % 2 === 0 ? -120 : 100, // Wider movement
+            repeat: -1,
+            duration: 2 + (i * 0.8),
+            ease: "sine.inOut",
+            yoyo: true
+        });
+        
+        // Vertical "Bounce" to make it less flat
+        gsap.to(wave, {
+            attr: { y: i % 2 === 0 ? 8 : 2 },
             repeat: -1,
             duration: 1.5 + (i * 0.5),
             ease: "sine.inOut",
@@ -139,7 +148,7 @@ function initLoader() {
         });
     });
 
-    // 2. High-Speed Rise (2.5s)
+    // 2. THE RISE
     const tl = gsap.timeline();
     tl.to(wineWrapper, {
         height: "100%",
@@ -147,8 +156,8 @@ function initLoader() {
         ease: "power2.inOut"
     }, 0);
 
-    // 3. Dual-Percentage Update
-    const steps = [22, 45, 68, 85, 94, 100];
+    // 3. PERCENTAGE SYNC
+    const steps = [15, 38, 62, 84, 96, 100];
     steps.forEach((step, index) => {
         tl.to([bgPercent, fgPercent], {
             innerText: step,
@@ -158,12 +167,12 @@ function initLoader() {
         }, index * 0.4);
     });
 
-    // 4. Reveal
+    // 4. EXIT
     tl.to(preloader, {
         yPercent: -100,
         duration: 0.8,
         ease: "expo.inOut",
-        delay: 0.2,
+        delay: 0.3,
         onComplete: () => {
             preloader.style.display = "none";
             if (typeof window.init === "function") window.init();
