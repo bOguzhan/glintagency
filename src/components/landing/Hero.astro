@@ -104,7 +104,45 @@ const translatePath = useTranslatedPath(lang);
 		const parentSplit = new SplitText(".hero h1", {
 			linesClass: "split-parent",
 		});
+const contactBtn = document.querySelector('.hero button'); // Ensure this matches your class
 
+if (contactBtn) {
+    // Create the heartbeat timeline
+    let heartbeat = gsap.timeline({ repeat: -1, paused: true });
+    
+    // The "Lub-Dub" rhythm
+    heartbeat.to(contactBtn, { scale: 1.15, duration: 0.1, ease: "power2.out" })
+             .to(contactBtn, { scale: 1.0, duration: 0.1, ease: "power2.in" })
+             .to(contactBtn, { scale: 1.1, duration: 0.1, ease: "power2.out" }, "+=0.05")
+             .to(contactBtn, { scale: 1.0, duration: 0.2, ease: "power2.in" });
+
+    window.addEventListener("mousemove", (e) => {
+        const rect = contactBtn.getBoundingClientRect();
+        const btnX = rect.left + rect.width / 2;
+        const btnY = rect.top + rect.height / 2;
+        
+        // Calculate distance between mouse and button center
+        const distance = Math.hypot(e.clientX - btnX, e.clientY - btnY);
+        
+        // If mouse is within 400px, start "beating"
+        if (distance < 400) {
+            heartbeat.play();
+            // Speed up the heart rate as you get closer (timeScale)
+            const speed = gsap.utils.mapRange(0, 400, 2.5, 1, distance);
+            gsap.to(heartbeat, { timeScale: speed, duration: 0.3 });
+            
+            // Subtle Burgundy glow pulse
+            gsap.to(contactBtn, { 
+                boxShadow: `0 0 ${gsap.utils.mapRange(0, 400, 30, 0, distance)}px rgba(181, 31, 58, 0.6)`,
+                duration: 0.3 
+            });
+        } else {
+            // Calm down if the mouse moves away
+            gsap.to(heartbeat, { timeScale: 1, duration: 1 });
+            if (distance > 500) heartbeat.pause();
+        }
+    });
+}
 		gsap.timeline()
 			.from(childSplit.lines, {
 				duration: 1.5,
