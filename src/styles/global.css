@@ -136,12 +136,7 @@ html {
 	mask-image: paint(squircle);
 }
 
-.squircle-hover:hover {
-	--squircle-smooth: 1;
-	--squircle-radius: 10px;
-	background: #272521;
-	mask-image: paint(squircle);
-}
+
 
 .squircle-white-hover:hover {
 	--squircle-smooth: 1;
