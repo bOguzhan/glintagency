@@ -1,48 +1,30 @@
 ---
+import { getEntry, render } from "astro:content";
 import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 
-// 1. Get the slug from the URL
+// 1. Get the slug from the URL (e.g., "studiovision")
 const { slug } = Astro.params;
 
-// 2. Fetch data from WordPress GraphQL
-const response = await fetch(import.meta.env.WORDPRESS_API_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    query: `
-      query GetWork($id: ID!) {
-        work(id: $id, idType: SLUG) {
-          title
-          content
-          excerpt
-        }
-      }
-    `,
-    variables: { id: slug },
-  }),
-});
+// 2. Fetch the entry by combining the 'en/' prefix with the slug
+// We use 'en/' here assuming your main site is English.
+const entry = await getEntry("projects", `en/${slug}`);
 
-const json = await response.json();
-const entry = json.data?.work;
-
-// 3. Handle 404 if project doesn't exist in WP
+// 3. If not found in 'en', or just as a safety 404
 if (!entry) {
-  return Astro.redirect('/404');
+    console.error(`Project not found at: projects/en/${slug}`);
+    return Astro.redirect("/404");
 }
 
-// 4. Map WP data to your existing Layout format
-const frontmatter = {
-  title: entry.title,
-  description: entry.excerpt?.replace(/<[^>]*>?/gm, '') || "", // Strip HTML tags for SEO
-};
+// 4. Use the new Astro 5.0+ render function
+const { Content } = await render(entry);
 
 const seo = {
-    title: `${entry.title} - Glint Ajans`,
-    description: frontmatter.description,
-    canonical: `${import.meta.env.SITE_URL}/work/${slug}/`,
+    title: `${entry.data.title} - Glint Ajans`,
+    description: entry.data.description,
+    canonical: `https://89.168.120.151/work/${slug}/`,
 };
 ---
 
-<MarkdownPostLayout frontmatter={frontmatter} seo={seo}>
-    <div set:html={entry.content} />
+<MarkdownPostLayout frontmatter={entry.data} seo={seo}>
+    <Content />
 </MarkdownPostLayout>
