@@ -27,7 +27,7 @@ const translatePath = useTranslatedPath(lang);
 				<div class="flex flex-col items-center justify-center gap-3 lg:col-start-1">
 					<div class="squircle-bg rounded-lg bg-zinc-900" data-cursor-hover data-cursor-parallax>
 						<a
-							class="hero-button flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
+							class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10"
 							aria-label="Contact Page"
 							href={translatePath("/contact/")}>
 							{t("contact")}
@@ -97,53 +97,6 @@ const translatePath = useTranslatedPath(lang);
 	gsap.registerPlugin(ScrollTrigger, SplitText, ScrollToPlugin);
 
 	function init() {
-		// Target the glow element and the main hero container
-const glow = document.querySelector('.hero-glow'); // Adjust selector to your glow div
-const heroContent = document.querySelector('.hero');
-
-window.addEventListener("mousemove", (e) => {
-    const { clientX, clientY } = e;
-    const xPos = (clientX / window.innerWidth - 0.5);
-    const yPos = (clientY / window.innerHeight - 0.5);
-
-    // The glow moves more aggressively than the text for depth
-    gsap.to(glow, {
-        duration: 1.2,
-        x: xPos * 50,
-        y: yPos * 50,
-        ease: "power2.out"
-    });
-
-    gsap.to(heroContent, {
-        duration: 0.8,
-        x: xPos * 20,
-        y: yPos * 20,
-        ease: "power2.out"
-    });
-});
-const contactBtn = document.querySelector('.hero-button'); // Or your specific class
-
-contactBtn?.addEventListener("mousemove", (e) => {
-    const rect = contactBtn.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    gsap.to(contactBtn, {
-        x: x * 0.3, // The button "reaches" toward the mouse
-        y: y * 0.3,
-        duration: 0.3,
-        ease: "power2.out"
-    });
-});
-
-contactBtn?.addEventListener("mouseleave", () => {
-    gsap.to(contactBtn, {
-        x: 0,
-        y: 0,
-        duration: 0.5,
-        ease: "elastic.out(1, 0.3)" // Snaps back beautifully
-    });
-});
 		const childSplit = new SplitText(".hero h1", {
 			type: "lines",
 			linesClass: "split-child",
