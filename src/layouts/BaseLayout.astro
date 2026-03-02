@@ -10,7 +10,7 @@ import { getLangFromUrl } from "../i18n/utils";
 const { pathname } = Astro.url;
 
 type Props = {
-	seo?: AstroSeoProps;
+    seo?: AstroSeoProps;
 };
 
 const { seo: seoProp } = Astro.props;
@@ -20,126 +20,100 @@ const lang = getLangFromUrl(Astro.url);
 const shareImage = new URL("/images/meta/mintaka_share.gif", Astro.site).toString();
 
 const defaultSeo: AstroSeoProps = {
-	title: "Design Agency Leading in Performant Web Design Solutions - Glint Agency",
-	description:
-		"Glint Agency excels in creating fast, user-friendly websites with a focus on aesthetic design and SEO optimization, ensuring a standout online presence",
-	canonical: "https://glintagency.com",
-	openGraph: {
-		url: "https://glintagency.com",
-		title: "Design Agency Leading in Performant Web Design Solutions - Glint Agency",
-		description:
-			"Glint Agency excels in creating fast, user-friendly websites with a focus on aesthetic design and SEO optimization, ensuring a standout online presence",
-		images: [
-			{
-				url: shareImage,
-				width: 1200,
-				height: 630,
-				alt: "Social open graph",
-				type: "image/gif",
-			},
-			{
-				url: shareImage,
-				width: 4096,
-				height: 4096,
-				alt: "Twitter open graph",
-				type: "image/gif",
-			},
-		],
-		site_name: "Mintaka",
-	},
-	twitter: {
-		handle: "@mintakastudio",
-		site: "@mintakastudio",
-		cardType: "summary_large_image",
-	},
-	additionalMetaTags: [
-		{
-			name: "publisher",
-			content: "Mintaka Studio",
-		},
-	],
+    title: "Design Agency Leading in Performant Web Design Solutions - Glint Agency",
+    description: "Glint Agency excels in creating fast, user-friendly websites with a focus on aesthetic design and SEO optimization.",
+    canonical: "https://glintagency.com",
+    openGraph: {
+        url: "https://glintagency.com",
+        title: "Design Agency Leading in Performant Web Design Solutions - Glint Agency",
+        description: "Glint Agency excels in creating fast, user-friendly websites.",
+        images: [{ url: shareImage, width: 1200, height: 630, alt: "Social open graph", type: "image/gif" }],
+        site_name: "Glint",
+    },
 };
 
-const seo = {
-	...defaultSeo,
-	...seoProp,
-};
+const seo = { ...defaultSeo, ...seoProp };
 
 function cursorFollowerActive() {
-	const paths = ["", "/", "/it/", "/it"];
-	return paths.includes(pathname);
+    const paths = ["", "/", "/it/", "/it"];
+    return paths.includes(pathname);
 }
 ---
 
 <html lang={lang}>
-	<head>
-		<BaseHead />
-		<AstroSeo {...seo} />
-	</head>
-	<body class="bg-slate-50">
-<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
-  
-  <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
-  <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
+    <head>
+        <BaseHead />
+        <AstroSeo {...seo} />
+    </head>
+    <body class="bg-slate-50">
+        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
+            
+            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
+            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
 
-  <div id="loader-content" class="relative z-30 flex items-center justify-center w-full h-full">
-    
-    <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
-       </div>
+            <div id="loader-content" class="relative z-30 w-full h-full flex items-center justify-center">
+                
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div class="flex items-baseline text-black">
+                        <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+                        <span class="text-[5vw] font-light ml-2">%</span>
+                    </div>
+                </div>
 
-    <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-       <div class="flex items-baseline text-black">
-          <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
-          <span class="text-[5vw] font-light ml-2">%</span>
-       </div>
-    </div>
-  </div>
-</div>
+                <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
+                    <div class="absolute inset-0 w-screen h-screen flex items-center justify-center pointer-events-none">
+                        <div class="flex items-baseline text-white">
+                            <span id="loader-percent-fg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+                            <span class="text-[5vw] font-light ml-2">%</span>
+                        </div>
+                    </div>
 
-    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
-      <defs>
-        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
-      </defs>
-      <g class="parallax">
-        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
-        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
-        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
-        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
-      </g>
-    </svg>
-  </div>
-</div>
-		<BackgroundTexture />
-		<Navigation />
-		{cursorFollowerActive() && <BlobCursorFollower />}
-		<slot />
-		<Footer />
-		<div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
+                    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
+                        <defs>
+                            <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
+                        </defs>
+                        <g class="parallax">
+                            <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
+                            <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
+                            <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
+                            <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <BackgroundTexture />
+        <Navigation />
+        {cursorFollowerActive() && <BlobCursorFollower />}
+        <slot />
+        <Footer />
+        <div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
 
 <script>
   import { gsap } from "gsap";
 
-function initLoader() {
+  function initLoader() {
     const bgPercent = document.querySelector("#loader-percent-bg");
     const fgPercent = document.querySelector("#loader-percent-fg");
     const wineWrapper = document.querySelector("#wine-wrapper");
     const preloader = document.querySelector("#preloader");
+    const preloaderTop = document.querySelector("#preloader-top");
+    const preloaderBottom = document.querySelector("#preloader-bottom");
+    const loaderContent = document.querySelector("#loader-content");
     
-    if (!bgPercent || !fgPercent || !wineWrapper) return;
+    if (!bgPercent || !fgPercent || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-    // 1. CHOPPY PARALLAX
+    // 1. WAVE PARALLAX
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
-        // Fast, short horizontal movement
         gsap.to(wave, {
-            x: i % 2 === 0 ? -40 : 30, // Shorter travel for tighter chop
+            x: i % 2 === 0 ? -40 : 30,
             repeat: -1,
-            duration: 0.8 + (i * 0.3), // Fast durations (under 2s)
+            duration: 0.8 + (i * 0.3),
             ease: "sine.inOut",
             yoyo: true
         });
-        
-        // Randomize Y slightly to prevent overlapping flat spots
         gsap.to(wave, {
             attr: { y: 2 + (i * 2) },
             repeat: -1,
@@ -149,15 +123,16 @@ function initLoader() {
         });
     });
 
-    // 2. THE RISE (2.5s)
+    // 2. TIMELINE ANIMATION
     const tl = gsap.timeline();
+    
+    // Rise & Counter Parallel
     tl.to(wineWrapper, {
         height: "100%",
         duration: 2.5,
         ease: "power2.inOut"
     }, 0);
 
-    // 3. PERCENTAGE SYNC
     const steps = [20, 48, 72, 89, 96, 100];
     steps.forEach((step, index) => {
         tl.to([bgPercent, fgPercent], {
@@ -168,8 +143,7 @@ function initLoader() {
         }, index * 0.4);
     });
 
-    // 4. EXIT
-    // We start the split as soon as the counter hits 100
+    // 3. THE SPLIT EXIT
     tl.to(loaderContent, {
         opacity: 0,
         duration: 0.4,
@@ -180,7 +154,7 @@ function initLoader() {
         yPercent: -100,
         duration: 1.2,
         ease: "expo.inOut"
-    }, "-=0.2"); // Start slightly before text is fully gone
+    }, "-=0.2");
 
     tl.to(preloaderBottom, {
         yPercent: 100,
@@ -190,22 +164,20 @@ function initLoader() {
             preloader.style.display = "none";
             if (typeof window.init === "function") window.init();
         }
-    }, "<"); // "<" means start at the exact same time as the top panel
-}
+    }, "<"); 
+  }
 
   // Sparkle Logic
   const container = document.getElementById('sparkle-container');
   const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
-
   window.addEventListener("mousemove", (e) => {
     if(container) createSparkle(e.clientX, e.clientY);
   });
 
   function createSparkle(x, y) {
     const sparkle = document.createElement("div");
-    const size = Math.random() * 12 + 12; 
+    const size = Math.random() * 8 + 8; 
     const color = colors[Math.floor(Math.random() * colors.length)];
-
     Object.assign(sparkle.style, {
       position: "absolute",
       left: `${x}px`,
@@ -217,14 +189,11 @@ function initLoader() {
       pointerEvents: "none",
       zIndex: "9999"
     });
-
     container.appendChild(sparkle);
-
     gsap.to(sparkle, {
-      duration: Math.random() * 0.8 + 0.6,
-      x: (Math.random() - 0.5) * 150, 
-      y: (Math.random() - 0.5) * 150,
-      rotation: Math.random() * 180,
+      duration: 0.8,
+      x: (Math.random() - 0.5) * 100, 
+      y: (Math.random() - 0.5) * 100,
       scale: 0,
       opacity: 0,
       ease: "power1.out",
@@ -232,58 +201,21 @@ function initLoader() {
     });
   }
 
-  // Initialize the loader
   document.addEventListener("DOMContentLoaded", initLoader);
 </script>
+
 <script>
   import Lenis from 'lenis'
   import { gsap } from 'gsap'
   import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-  // 1. Initialize Lenis
-  const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom cubic easing
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-  })
-
-  // 2. Synchronize Lenis with GSAP ScrollTrigger
-  // This is vital so your GSAP animations stay in sync with the smooth scroll
+  const lenis = new Lenis({ duration: 1.2, smoothWheel: true })
   lenis.on('scroll', ScrollTrigger.update)
-
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000)
-  })
-
-  gsap.ticker.lagSmoothing(0)
-  
+  gsap.ticker.add((time) => { lenis.raf(time * 1000) })
 </script>
 
 <style is:global>
-  /* 3. Essential CSS for Lenis */
-  html.lenis,
-  html.lenis body {
-    height: auto;
-  }
-
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
-  }
-
-  .lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
-  }
-
-  .lenis.lenis-stopped {
-    overflow: hidden;
-  }
-
-  .lenis.lenis-scrolling iframe {
-    pointer-events: none;
-  }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
 </style>
-<div class="absolute bottom-0 left-0 h-1 bg-[#800020] z-20" id="loader-bar"></div>
-	</body>
+    </body>
 </html>
