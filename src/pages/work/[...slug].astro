@@ -1,58 +1,48 @@
 ---
-import { getCollection } from "astro:content";
-import type { AstroSeoProps } from "@astrolib/seo";
 import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 
-export async function getStaticPaths() {
-	const projectsEntries = await getCollection("projects");
+// 1. Get the slug from the URL
+const { slug } = Astro.params;
 
-	return projectsEntries
-		.map((entry) => {
-			const [lang, ...slug] = entry.slug.split("/");
-			return { params: { lang, slug: slug.join("/") || undefined }, props: entry };
-		})
-		.filter((entry) => entry.params.lang === "en");
+// 2. Fetch data from WordPress GraphQL
+const response = await fetch(import.meta.env.WORDPRESS_API_URL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: `
+      query GetWork($id: ID!) {
+        work(id: $id, idType: SLUG) {
+          title
+          content
+          excerpt
+        }
+      }
+    `,
+    variables: { id: slug },
+  }),
+});
+
+const json = await response.json();
+const entry = json.data?.work;
+
+// 3. Handle 404 if project doesn't exist in WP
+if (!entry) {
+  return Astro.redirect('/404');
 }
 
-const entry = Astro.props;
-const { Content } = await entry.render();
+// 4. Map WP data to your existing Layout format
+const frontmatter = {
+  title: entry.title,
+  description: entry.excerpt?.replace(/<[^>]*>?/gm, '') || "", // Strip HTML tags for SEO
+};
 
-const seo: AstroSeoProps = {
-	title: `Project ${entry.data.title} - Majestico`,
-	description: entry.data.description,
-	canonical: `https://mintaka.co/work/${entry.slug}/`,
-	openGraph: {
-		url: entry.slug,
-		title: entry.data.title,
-		description: "{frontmatter.description}",
-		images: [
-			{
-				url: "https://mintaka.co/opengraph/social-og.jpg",
-				width: 1200,
-				height: 630,
-				alt: "Social open graph",
-				type: "image/jpeg",
-			},
-			{
-				url: "https://mintaka.co/opengraph/twitter-og.jpg",
-				width: 4096,
-				height: 4096,
-				alt: "Twitter open graph",
-				type: "image/jpeg",
-			},
-			{ url: "https://mintaka.co/opengraph/social-og.jpg" },
-			{ url: "https://mintaka.co/opengraph/twitter-og.jpg" },
-		],
-		site_name: "YourSitesName",
-	},
-	twitter: {
-		handle: "@TwitterHandle",
-		site: "@site",
-		cardType: "summary_large_image",
-	},
+const seo = {
+    title: `${entry.title} - Glint Ajans`,
+    description: frontmatter.description,
+    canonical: `${import.meta.env.SITE_URL}/work/${slug}/`,
 };
 ---
 
-<MarkdownPostLayout frontmatter={entry.data} body={entry.body} seo={seo}>
-	<Content />
+<MarkdownPostLayout frontmatter={frontmatter} seo={seo}>
+    <div set:html={entry.content} />
 </MarkdownPostLayout>
