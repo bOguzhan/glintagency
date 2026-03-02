@@ -77,12 +77,14 @@ function cursorFollowerActive() {
 		<AstroSeo {...seo} />
 	</head>
 	<body class="bg-slate-50">
-		<div id="preloader" class="fixed inset-0 z-[100] flex items-end justify-start p-12 bg-[#f4f4f4] overflow-hidden">
-  <div class="absolute inset-0 opacity-20 pointer-events-none grain-bg"></div>
+<div id="preloader" class="fixed inset-0 z-[100] flex items-end justify-start p-12 bg-[#f4f4f4] overflow-hidden">
+  <div id="wine-fill" class="absolute bottom-0 left-0 w-full bg-[#800020] z-0" style="height: 0%;"></div>
   
-  <div class="relative z-10 flex items-baseline">
-    <span id="loader-percent" class="text-[15vw] font-medium leading-none tracking-tighter">0</span>
-    <span class="text-[5vw] font-light ml-2">%</span>
+  <div class="absolute inset-0 opacity-20 pointer-events-none grain-bg z-10"></div>
+  
+  <div class="relative z-20 flex items-baseline">
+    <span id="loader-percent" class="text-[15vw] font-medium leading-none tracking-tighter mix-blend-difference text-white">0</span>
+    <span class="text-[5vw] font-light ml-2 mix-blend-difference text-white">%</span>
   </div>
 </div>
 		<BackgroundTexture />
@@ -95,39 +97,49 @@ function cursorFollowerActive() {
 <script>
   import { gsap } from "gsap";
 
-  function initLoader() {
+function initLoader() {
     const percentText = document.querySelector("#loader-percent");
     const preloader = document.querySelector("#preloader");
-    const loaderBar = document.querySelector("#loader-bar");
+    const wineFill = document.querySelector("#wine-fill");
     
-    // Safety check to prevent errors if elements are missing
-    if (!percentText || !preloader) return;
+    if (!percentText || !preloader || !wineFill) return;
 
-    let loaderValue = { val: 0 };
+    const step1 = Math.floor(Math.random() * 25) + 5;
+    const step2 = Math.floor(Math.random() * 25) + 40;
+    const step3 = Math.floor(Math.random() * 20) + 75;
+    const steps = [step1, step2, step3, 100];
+
     const tl = gsap.timeline();
 
-    tl.to(loaderValue, {
-        val: 100,
-        duration: 2.5, 
-        ease: "power2.inOut",
-        onUpdate: () => {
-            percentText.innerText = Math.floor(loaderValue.val);
-        }
-    })
-    // FIXED: Removed the semicolon that was here
-    .to(loaderBar, { width: "100%", duration: 2.5, ease: "power2.inOut" }, 0)
-    .to(preloader, {
-        yPercent: -100,
+    steps.forEach((step) => {
+        tl.to(percentText, {
+            innerText: step,
+            duration: 0.1,
+            snap: { innerText: 1 },
+            ease: "none",
+            onStart: () => {
+                // Animate the "Wine" rising
+                gsap.to(wineFill, { 
+                    height: `${step}%`, 
+                    duration: 0.8, 
+                    ease: "power2.out" 
+                });
+            }
+        }, "+=0.6");
+    });
+
+    // Fade out the whole preloader after it's full
+    tl.to(preloader, {
+        opacity: 0,
+        display: "none",
         duration: 1,
-        ease: "expo.inOut"
+        ease: "power2.inOut",
+        delay: 0.5
     })
     .call(() => {
-        // Only call init if it exists globally or in this scope
-        if (typeof init === "function") {
-            init(); 
-        }
+        if (typeof init === "function") init();
     });
-  }
+}
 
   // Sparkle Logic
   const container = document.getElementById('sparkle-container');
