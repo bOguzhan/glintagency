@@ -77,23 +77,24 @@ function cursorFollowerActive() {
 		<AstroSeo {...seo} />
 	</head>
 	<body class="bg-slate-50">
-<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center bg-white overflow-hidden">
+<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
   
-  <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-     <div class="flex items-baseline text-black">
-        <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
-        <span class="text-[5vw] font-light ml-2">%</span>
-     </div>
-  </div>
+  <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-white z-10"></div>
+  <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-white z-10"></div>
 
-  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
+  <div id="loader-content" class="relative z-30 flex items-center justify-center w-full h-full">
     
-    <div class="absolute bottom-0 left-0 w-screen h-screen flex items-center justify-center pointer-events-none">
-       <div class="flex items-baseline text-white">
-          <span id="loader-percent-fg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+    <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
+       </div>
+
+    <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+       <div class="flex items-baseline text-black">
+          <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
           <span class="text-[5vw] font-light ml-2">%</span>
        </div>
     </div>
+  </div>
+</div>
 
     <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
       <defs>
@@ -168,16 +169,28 @@ function initLoader() {
     });
 
     // 4. EXIT
-    tl.to(preloader, {
+    // We start the split as soon as the counter hits 100
+    tl.to(loaderContent, {
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.out"
+    });
+
+    tl.to(preloaderTop, {
         yPercent: -100,
-        duration: 0.8,
+        duration: 1.2,
+        ease: "expo.inOut"
+    }, "-=0.2"); // Start slightly before text is fully gone
+
+    tl.to(preloaderBottom, {
+        yPercent: 100,
+        duration: 1.2,
         ease: "expo.inOut",
-        delay: 0.2,
         onComplete: () => {
             preloader.style.display = "none";
             if (typeof window.init === "function") window.init();
         }
-    });
+    }, "<"); // "<" means start at the exact same time as the top panel
 }
 
   // Sparkle Logic
