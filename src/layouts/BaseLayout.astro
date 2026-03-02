@@ -95,15 +95,15 @@ function cursorFollowerActive() {
        </div>
     </div>
 
-    <svg class="absolute left-0 w-[200%] h-[300px] z-30 pointer-events-none origin-bottom scale-y-[1.8]" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -295px;">
+    <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
       <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-25 88-25s 58 25 88 25 58-25 88-25 58 25 88 25 v44h-352z" />
+        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
       </defs>
       <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
-        <use xlink:href="#gentle-wave" x="48" y="6" fill="rgba(128, 0, 32, 0.7)" />
-        <use xlink:href="#gentle-wave" x="48" y="9" fill="#800020" />
+        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.2)" />
+        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.4)" />
+        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
+        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
       </g>
     </svg>
   </div>
@@ -126,29 +126,29 @@ function initLoader() {
     
     if (!bgPercent || !fgPercent || !wineWrapper) return;
 
-    // 1. TURBULENT WAVE ANIMATION
+    // 1. CHOPPY PARALLAX
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
-        // Chaotic horizontal movement
+        // Fast, short horizontal movement
         gsap.to(wave, {
-            x: i % 2 === 0 ? -150 : 120, 
+            x: i % 2 === 0 ? -40 : 30, // Shorter travel for tighter chop
             repeat: -1,
-            duration: 1.5 + (i * 0.4), // Different speeds for each layer
+            duration: 0.8 + (i * 0.3), // Fast durations (under 2s)
             ease: "sine.inOut",
             yoyo: true
         });
         
-        // Aggressive vertical oscillation
+        // Randomize Y slightly to prevent overlapping flat spots
         gsap.to(wave, {
-            attr: { y: i * 3 }, // Forces them to stay at different vertical levels
+            attr: { y: 2 + (i * 2) },
             repeat: -1,
-            duration: 1 + (i * 0.3),
-            ease: "sine.inOut",
+            duration: 1 + (i * 0.2),
+            ease: "power1.inOut",
             yoyo: true
         });
     });
 
-    // 2. THE RISE
+    // 2. THE RISE (2.5s)
     const tl = gsap.timeline();
     tl.to(wineWrapper, {
         height: "100%",
@@ -157,7 +157,7 @@ function initLoader() {
     }, 0);
 
     // 3. PERCENTAGE SYNC
-    const steps = [18, 42, 65, 88, 97, 100];
+    const steps = [20, 48, 72, 89, 96, 100];
     steps.forEach((step, index) => {
         tl.to([bgPercent, fgPercent], {
             innerText: step,
