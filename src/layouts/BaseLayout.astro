@@ -77,12 +77,25 @@ function cursorFollowerActive() {
 		<AstroSeo {...seo} />
 	</head>
 	<body class="bg-slate-50">
-<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#f4f4f4] overflow-hidden">
+<div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center bg-white overflow-hidden">
   
-  <div id="wine-wrapper" class="absolute inset-0 w-full h-full bg-white">
-    <div id="wine-tank" class="absolute bottom-0 left-0 w-full bg-[#800020] z-10" style="height: 0%;"></div>
+  <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+     <div class="flex items-baseline text-black">
+        <span id="loader-percent-bg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+        <span class="text-[5vw] font-light ml-2">%</span>
+     </div>
+  </div>
 
-    <svg class="absolute left-0 w-full h-[120px] z-20 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="bottom: -120px;">
+  <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
+    
+    <div class="absolute bottom-0 left-0 w-screen h-screen flex items-center justify-center pointer-events-none">
+       <div class="flex items-baseline text-white">
+          <span id="loader-percent-fg" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
+          <span class="text-[5vw] font-light ml-2">%</span>
+       </div>
+    </div>
+
+    <svg class="absolute left-0 w-full h-[120px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -119px;">
       <defs>
         <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
       </defs>
@@ -93,13 +106,6 @@ function cursorFollowerActive() {
         <use xlink:href="#gentle-wave" x="48" y="7" fill="#800020" />
       </g>
     </svg>
-  </div>
-
-  <div class="absolute inset-0 opacity-10 pointer-events-none grain-bg z-30"></div>
-
-  <div class="relative z-40 flex items-baseline mix-blend-difference">
-    <span id="loader-percent" class="text-[18vw] font-black text-white leading-none tracking-tighter">0</span>
-    <span class="text-[5vw] font-light text-white ml-2">%</span>
   </div>
 </div>
 		<BackgroundTexture />
@@ -113,39 +119,38 @@ function cursorFollowerActive() {
   import { gsap } from "gsap";
 
 function initLoader() {
-    const percentText = document.querySelector("#loader-percent");
+    const bgPercent = document.querySelector("#loader-percent-bg");
+    const fgPercent = document.querySelector("#loader-percent-fg");
     const preloader = document.querySelector("#preloader");
-    const wineTank = document.querySelector("#wine-tank");
+    const wineWrapper = document.querySelector("#wine-wrapper");
     const wineCurve = document.querySelector("#wine-curve");
     
-    if (!percentText || !preloader || !wineTank || !wineCurve) return;
+    if (!bgPercent || !fgPercent || !preloader || !wineWrapper) return;
 
-    // 1. Setup the Wave Parallax (Horizontal slosh)
+    // 1. Wave Parallax
     const waves = document.querySelectorAll(".parallax use");
     waves.forEach((wave, i) => {
         gsap.to(wave, {
             x: i % 2 === 0 ? -90 : 85,
             repeat: -1,
-            duration: 2 + (i * 1), // Each layer moves at a different speed
+            duration: 1.5 + (i * 0.5),
             ease: "sine.inOut",
             yoyo: true
         });
     });
 
-    // 2. The Faster Unified Rise (2.5 seconds)
+    // 2. High-Speed Rise (2.5s)
     const tl = gsap.timeline();
-
-    tl.to([wineTank, wineCurve], {
-        bottom: (index, target) => target === wineCurve ? "100%" : "0%", // Curve goes to top, tank stays bottom
-        height: (index, target) => target === wineTank ? "100%" : "120px",
+    tl.to(wineWrapper, {
+        height: "100%",
         duration: 2.5,
         ease: "power2.inOut"
     }, 0);
 
-    // 3. Percentage Sync
-    const steps = [20, 45, 65, 82, 95, 100];
+    // 3. Dual-Percentage Update
+    const steps = [22, 45, 68, 85, 94, 100];
     steps.forEach((step, index) => {
-        tl.to(percentText, {
+        tl.to([bgPercent, fgPercent], {
             innerText: step,
             duration: 0.1,
             snap: { innerText: 1 },
@@ -153,7 +158,7 @@ function initLoader() {
         }, index * 0.4);
     });
 
-    // 4. Clean Reveal
+    // 4. Reveal
     tl.to(preloader, {
         yPercent: -100,
         duration: 0.8,
