@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import logoImage from "../assets/images/global/logo.svg";
 import { Icon } from "astro-icon/components";
 import { getLangFromUrl, getUrlWithoutLang, useTranslations, useTranslatedPath } from "@i18n/utils";
 
@@ -43,7 +43,14 @@ const { pathname } = Astro.url;
 	<a href={translatePath("/")} aria-label="Home" class="logo absolute z-50 flex h-[4.5rem] items-center md:h-[5.9rem]">
 		<svg class="logo-svg h-10 w-auto" viewBox="0 0 24 24" fill="currentColor">
             <!-- Update the 'xlink:href' attribute to point to your new SVG file -->
-            <img src="/src/assets/images/global/logo.svg" alt="Logo" width="50%" height="50%"/>
+            <a href={translatePath("/")} aria-label="Home" class="logo absolute z-50 flex h-[4.5rem] items-center md:h-[5.9rem]">
+    <Image 
+        src={logoImage} 
+        alt="Glint Ajans Logo" 
+        class="logo-svg h-10 w-auto"
+        loading="eager" 
+    />
+</a>
         </svg>
 	</a>
 	<div data-xdata="{ open: false }" class="navigation fixed right-0 top-0 z-50" data-xbind.class="{'w-full navbar-open': open}">
