@@ -86,77 +86,73 @@ function cursorFollowerActive() {
             import { gsap } from "gsap";
 
             function initLoader() {
-                const percentText = document.querySelector("#loader-percent");
-                const wineWrapper = document.querySelector("#wine-wrapper");
-                const wineCurve = document.querySelector("#wine-curve");
-                const preloader = document.querySelector("#preloader");
-                const preloaderTop = document.querySelector("#preloader-top");
-                const preloaderBottom = document.querySelector("#preloader-bottom");
-                const loaderContent = document.querySelector("#loader-content");
-                
-                if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
+    const percentText = document.querySelector("#loader-percent");
+    const wineWrapper = document.querySelector("#wine-wrapper");
+    const wineCurve = document.querySelector("#wine-curve");
+    const preloader = document.querySelector("#preloader");
+    const preloaderTop = document.querySelector("#preloader-top");
+    const preloaderBottom = document.querySelector("#preloader-bottom");
+    const loaderContent = document.querySelector("#loader-content");
+    
+    if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-                // 1. CHOPPY WAVE ANIMATION
-                const waves = document.querySelectorAll(".parallax use");
-                waves.forEach((wave, i) => {
-                    gsap.to(wave, {
-                        x: i % 2 === 0 ? -45 : 35,
-                        repeat: -1,
-                        duration: 0.7 + (i * 0.2),
-                        ease: "sine.inOut",
-                        yoyo: true
-                    });
-                });
-
-                // 2. MAIN TIMELINE
-                const tl = gsap.timeline();
-                
-                // Rise
-                tl.to(wineWrapper, {
-                    height: "100%",
-                    duration: 2.2,
-                    ease: "power2.inOut"
-                }, 0);
-
-                // Percentage Sync
-                const steps = [18, 42, 65, 84, 96, 100];
-                steps.forEach((step, index) => {
-                    tl.to(percentText, {
-                        innerText: step,
-                        duration: 0.1,
-                        snap: { innerText: 1 },
-                        ease: "none"
-                    }, index * 0.35);
-                });
-
- // 3. THE SEAMLESS SPLIT EXIT
-    // Speed up the fade of the "UI" elements
-    tl.to([loaderContent, wineCurve], {
-        opacity: 0,
-        duration: 0.3, // Shorter duration for snappier reveal
-        ease: "power2.out"
+    // 1. CONSTANT WAVE CHOP
+    gsap.to(".parallax use", {
+        x: (i) => i % 2 === 0 ? -45 : 35,
+        repeat: -1,
+        duration: 0.8,
+        ease: "sine.inOut",
+        yoyo: true
     });
 
-    // Kill the wine-wrapper immediately so it doesn't block the view
+    // 2. THE 3-SECOND SMOOTH TIMELINE
+    const tl = gsap.timeline();
+    
+    // Create a proxy object for the counter to ensure sub-pixel smoothness
+    const counter = { val: 0 };
+
+    // Animate everything together over 3 seconds
+    // Power3.out starts very fast and slows down significantly at the end
+    tl.to(counter, {
+        val: 100,
+        duration: 3,
+        ease: "power3.out", 
+        onUpdate: () => {
+            percentText.innerText = Math.floor(counter.val);
+        }
+    }, 0);
+
+    tl.to(wineWrapper, {
+        height: "100%",
+        duration: 3,
+        ease: "power3.out"
+    }, 0);
+
+    // 3. THE INSTANT SPLIT (Happens at the 3s mark)
+    tl.to([loaderContent, wineCurve], {
+        opacity: 0,
+        duration: 0.3,
+        ease: "linear"
+    });
+
     tl.set(wineWrapper, { display: "none" });
 
-    // Open the curtains
     tl.to(preloaderTop, {
         yPercent: -100,
-        duration: 1.1,
+        duration: 1.2,
         ease: "expo.inOut"
-    }, "-=0.2"); // Overlap the fade slightly for a smoother "shutter" look
+    }, "-=0.2");
 
     tl.to(preloaderBottom, {
         yPercent: 100,
-        duration: 1.1,
+        duration: 1.2,
         ease: "expo.inOut",
         onComplete: () => {
             preloader.style.display = "none";
             if (typeof window.init === "function") window.init();
         }
-    }, "<");
-            }
+    }, "<"); 
+}
 
             // Sparkle Cursor Logic
             const container = document.getElementById('sparkle-container');
