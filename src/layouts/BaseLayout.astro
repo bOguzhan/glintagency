@@ -46,10 +46,11 @@ function cursorFollowerActive() {
         <AstroSeo {...seo} />
     </head>
     <body class="bg-slate-50">
-        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-white">
-            
-            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10"></div>
-            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10"></div>
+        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-transparent pointer-events-none">
+  
+            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto"></div>
+            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto"></div>
+
 
             <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
                 <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
@@ -128,33 +129,33 @@ function cursorFollowerActive() {
                     }, index * 0.35);
                 });
 
-                // 3. SEAMLESS SPLIT EXIT
-                // Fade waves and text just as the screen is full burgundy
-                tl.to([loaderContent, wineCurve], {
-                    opacity: 0,
-                    duration: 0.4,
-                    ease: "power1.in"
-                });
+ // 3. THE SEAMLESS SPLIT EXIT
+    // Speed up the fade of the "UI" elements
+    tl.to([loaderContent, wineCurve], {
+        opacity: 0,
+        duration: 0.3, // Shorter duration for snappier reveal
+        ease: "power2.out"
+    });
 
-                // Handover fill to panels
-                tl.set(wineWrapper, { display: "none" }, "+=0.1");
+    // Kill the wine-wrapper immediately so it doesn't block the view
+    tl.set(wineWrapper, { display: "none" });
 
-                // Split curtains
-                tl.to(preloaderTop, {
-                    yPercent: -100,
-                    duration: 1.1,
-                    ease: "expo.inOut"
-                }, "<"); 
+    // Open the curtains
+    tl.to(preloaderTop, {
+        yPercent: -100,
+        duration: 1.1,
+        ease: "expo.inOut"
+    }, "-=0.2"); // Overlap the fade slightly for a smoother "shutter" look
 
-                tl.to(preloaderBottom, {
-                    yPercent: 100,
-                    duration: 1.1,
-                    ease: "expo.inOut",
-                    onComplete: () => {
-                        preloader.style.display = "none";
-                        if (typeof window.init === "function") window.init();
-                    }
-                }, "<"); 
+    tl.to(preloaderBottom, {
+        yPercent: 100,
+        duration: 1.1,
+        ease: "expo.inOut",
+        onComplete: () => {
+            preloader.style.display = "none";
+            if (typeof window.init === "function") window.init();
+        }
+    }, "<");
             }
 
             // Sparkle Cursor Logic
