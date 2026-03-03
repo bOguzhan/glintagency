@@ -48,9 +48,8 @@ function cursorFollowerActive() {
     <body class="bg-slate-50">
         <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-transparent pointer-events-none">
   
-            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto"></div>
-            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto"></div>
-
+            <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
+            <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
 
             <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
                 <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
@@ -86,75 +85,68 @@ function cursorFollowerActive() {
             import { gsap } from "gsap";
 
             function initLoader() {
-    const percentText = document.querySelector("#loader-percent");
-    const wineWrapper = document.querySelector("#wine-wrapper");
-    const wineCurve = document.querySelector("#wine-curve");
-    const preloader = document.querySelector("#preloader");
-    const preloaderTop = document.querySelector("#preloader-top");
-    const preloaderBottom = document.querySelector("#preloader-bottom");
-    const loaderContent = document.querySelector("#loader-content");
-    
-    if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
+                const percentText = document.querySelector("#loader-percent");
+                const wineWrapper = document.querySelector("#wine-wrapper");
+                const wineCurve = document.querySelector("#wine-curve");
+                const preloader = document.querySelector("#preloader");
+                const preloaderTop = document.querySelector("#preloader-top");
+                const preloaderBottom = document.querySelector("#preloader-bottom");
+                const loaderContent = document.querySelector("#loader-content");
+                
+                if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-    // 1. CONSTANT WAVE CHOP
-    gsap.to(".parallax use", {
-        x: (i) => i % 2 === 0 ? -45 : 35,
-        repeat: -1,
-        duration: 0.8,
-        ease: "sine.inOut",
-        yoyo: true
-    });
+                // 1. WAVE ANIMATION (Loops independently)
+                gsap.to(".parallax use", {
+                    x: (i) => i % 2 === 0 ? -45 : 35,
+                    repeat: -1,
+                    duration: 0.6,
+                    ease: "sine.inOut",
+                    yoyo: true
+                });
 
-    // 2. THE 3-SECOND SMOOTH TIMELINE
-    const tl = gsap.timeline();
-    
-    // Create a proxy object for the counter to ensure sub-pixel smoothness
-    const counter = { val: 0 };
+                // 2. THE MAIN FILL TIMELINE (1.8 Seconds)
+                const tl = gsap.timeline();
+                const counter = { val: 0 };
 
-    // Animate everything together over 3 seconds
-    // Power3.out starts very fast and slows down significantly at the end
-    tl.to(counter, {
-        val: 100,
-        duration: 1.8,
-        ease: "power1.out", 
-        onUpdate: () => {
-            percentText.innerText = Math.floor(counter.val);
-        }
-    }, 0);
+                tl.to(counter, {
+                    val: 100,
+                    duration: 1.8,
+                    ease: "power2.inOut", 
+                    onUpdate: () => {
+                        percentText.innerText = Math.round(counter.val);
+                    }
+                }, 0);
 
-    tl.to(wineWrapper, {
-        height: "100%",
-        duration: 1.8,
-        ease: "power1.out"
-    }, 0);
+                tl.to(wineWrapper, {
+                    height: "100%",
+                    duration: 1.8,
+                    ease: "power2.inOut"
+                }, 0);
 
-    // 3. THE INSTANT SPLIT (Happens at the 3s mark)
-    tl.to([loaderContent, wineCurve], {
-        opacity: 0,
-        duration: 0.3,
-        ease: "linear"
-    });
+                // 3. THE HAND-OFF AT 100%
+                // Show the solid shutter panels and hide the fill/waves/text instantly
+                tl.set([preloaderTop, preloaderBottom], { opacity: 1 });
+                tl.set([wineWrapper, loaderContent], { display: "none" });
 
-    tl.set(wineWrapper, { display: "none" });
+                // 4. THE SPLIT REVEAL
+                tl.to(preloaderTop, {
+                    yPercent: -100,
+                    duration: 1.1,
+                    ease: "expo.inOut"
+                });
 
-    tl.to(preloaderTop, {
-        yPercent: -100,
-        duration: 1.2,
-        ease: "expo.inOut"
-    }, "-=0.2");
+                tl.to(preloaderBottom, {
+                    yPercent: 100,
+                    duration: 1.1,
+                    ease: "expo.inOut",
+                    onComplete: () => {
+                        preloader.style.display = "none";
+                        if (typeof window.init === "function") window.init();
+                    }
+                }, "<"); 
+            }
 
-    tl.to(preloaderBottom, {
-        yPercent: 100,
-        duration: 1.2,
-        ease: "expo.inOut",
-        onComplete: () => {
-            preloader.style.display = "none";
-            if (typeof window.init === "function") window.init();
-        }
-    }, "<"); 
-}
-
-            // Sparkle Cursor Logic
+            // Sparkle Logic
             const container = document.getElementById('sparkle-container');
             const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
             window.addEventListener("mousemove", (e) => {
