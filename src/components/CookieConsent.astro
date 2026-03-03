@@ -2,7 +2,7 @@
 // src/components/CookieConsent.astro
 ---
 
-<div id="consent-banner" class="hidden fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 shadow-2xl rounded-lg p-6 z-50">
+<div id="consent-banner" style="z-index: 9999; display: none;" class="hidden fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 shadow-2xl rounded-lg p-6 z-50">
   <h3 class="text-lg font-bold mb-2 text-gray-900">Privacy Settings</h3>
   <p class="text-sm text-gray-600 mb-4">
     Choose which cookies you allow. Essential cookies are always on.
@@ -31,46 +31,25 @@
 </div>
 
 <script is:inline>
-  // Use a function to ensure IDs are grabbed after the DOM is ready
   function initConsent() {
     const banner = document.getElementById('consent-banner');
-    const saveBtn = document.getElementById('save-consent');
-    const allBtn = document.getElementById('accept-all');
-    
-    const googleCheck = document.getElementById('check-google');
-    const metaCheck = document.getElementById('check-meta');
+    if (!banner) return;
 
-    if (!banner || !saveBtn || !allBtn) return;
+    // Check localStorage
+    const consent = localStorage.getItem('site-consent');
 
-    // Show banner if no consent exists
-    if (!localStorage.getItem('site-consent')) {
+    if (!consent) {
+      // Force it to show using inline styles for high priority
+      banner.style.setProperty('display', 'block', 'important');
       banner.classList.remove('hidden');
+    } else {
+      banner.style.display = 'none';
     }
-
-    function applyConsent(prefs) {
-      console.log('Saving consent:', prefs); // Debugging line
-      localStorage.setItem('site-consent', JSON.stringify(prefs));
-      banner.classList.add('hidden');
-      
-      // Reload to trigger the tags in the <head>
-      window.location.reload(); 
-    }
-
-    saveBtn.addEventListener('click', () => {
-      applyConsent({ 
-        google: googleCheck.checked, 
-        meta: metaCheck.checked 
-      });
-    });
-
-    allBtn.addEventListener('click', () => {
-      applyConsent({ google: true, meta: true });
-    });
   }
 
-  // Run immediately
+  // Run on load
   initConsent();
 
-  // If you use Astro ViewTransitions, also run on page swaps
+  // Re-run if you navigate between pages (Astro ViewTransitions support)
   document.addEventListener('astro:after-swap', initConsent);
 </script>
