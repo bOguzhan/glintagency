@@ -4,9 +4,12 @@ import type { AstroSeoProps } from "@astrolib/seo";
 import Articles from "@components/blog/Articles.astro";
 
 // 1. Fetch posts from WordPress
-const response = await fetch("http://127.0.0.1/glintajans/graphql", {
+const response = await fetch("http://127.0.0.1/glintajans/graphql/", {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: { 
+    "Content-Type": "application/json",
+    "Host": "glint.tr" // <--- CRITICAL: Apache needs this to find the right site
+  },
   body: JSON.stringify({
     query: `
       query loadAllPosts {
