@@ -22,31 +22,33 @@ const allProjects = (await getCollection("projects"))
     <div class="col-span-12 col-start-1 mx-auto max-w-7xl">
         <h2 class="sr-only">{t("projects")}</h2>
         <ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
-            {
-                allProjects.map((project, index) => (
-                    <WokCard
-                        {/* If image exists, use its source. Otherwise, use video source or a placeholder */}
-        				image={project.data.image?.source || project.data.video?.source || "/fallback-placeholder.webp"}
-                        project={project.data.title}
-                        /* We point to /work/slug directly */
-                        link={`/work/${project.slug}`} 
-                        class={
-                            index % 2 === 0
-                                ? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
-                                : `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
-                        }
-                    />
-                ))
+ {
+    allProjects.map((project, index) => (
+        <WokCard
+            /* Pass the processed image object if it exists */
+            image={project.data.image?.source}
+            /* Pass the raw video string if it exists */
+            video={project.data.video?.source}
+            project={project.data.title}
+            link={`/work/${project.slug}`} 
+            class={
+                index % 2 === 0
+                    ? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
+                    : `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
             }
+        />
+    ))
+}
         </ol>
     </div>
 </section>
 
 <style is:global>
-	.work-preview-section ol li img {
-		--clip: 0%;
-		clip-path: inset(var(--clip) round 0.5rem);
-	}
+    .work-preview-section ol li img,
+    .work-preview-section ol li video {
+        --clip: 0%;
+        clip-path: inset(var(--clip) round 0.5rem);
+    }
 </style>
 
 <script>
@@ -57,8 +59,7 @@ const allProjects = (await getCollection("projects"))
 
 	function init() {
 		const projects = gsap.utils.toArray(".work-preview-section ol li") as gsap.DOMTarget[];
-		const previews = gsap.utils.toArray(".work-preview-section ol li img") as gsap.DOMTarget[];
-		previews.forEach((preview) => {
+		const previews = gsap.utils.toArray(".work-preview-section ol li img, .work-preview-section ol li video") as gsap.DOMTarget[];		previews.forEach((preview) => {
 			gsap.from(preview, {
 				scrollTrigger: {
 					trigger: preview,
