@@ -41,20 +41,19 @@ function cursorFollowerActive() {
 
 <html lang={lang}>
     <head>
-        <script is:inline>
+        <script is:inline define:vars={{ MEASUREMENT_ID: 'G-XSGKH91B83F' }}>
   const consent = JSON.parse(localStorage.getItem('site-consent') || '{}');
-  
+
   if (consent.google) {
-    // Load GA script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-SGKH91B83F';
-    document.head.appendChild(script);
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+    document.head.appendChild(s);
 
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    window.gtag = function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-SGKH91B83F');
+    gtag('config', MEASUREMENT_ID);
   }
 </script>
 <script is:inline>
