@@ -49,23 +49,24 @@ const allPosts = posts && posts.length > 0
             )
         }
 
-        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {
-                allPosts
-                    .slice(1)
-                    .map((post) => (
-                        <Entry
-                            url={"/blog/" + post.slug}
-                            title={post.title}
-                            description={post.excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160)}
-                            alt={post.title}
-                            pubDate={post.date.slice(0, 10)}
-                            author={post.author?.node?.name}
-                            image={post.featuredImage?.node?.mediaItemUrl}
-                        />
-                    ))
-            }
-        </div>
+ <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2">
+    {
+        allPosts
+            .slice(1)
+            .map((post) => (
+                <Entry
+                    url={"/blog/" + post.slug}
+                    title={post.title}
+                    description={post.excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160)}
+                    alt={post.title}
+                    pubDate={post.date.slice(0, 10)}
+                    author={post.author?.node?.name}
+                    /* Ensure we are passing the best quality URL */
+                    image={post.featuredImage?.node?.sourceUrl || post.featuredImage?.node?.mediaItemUrl}
+                />
+            ))
+    }
+</div>
     </div>
 </section>
 

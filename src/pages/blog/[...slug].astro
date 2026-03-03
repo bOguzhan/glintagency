@@ -25,7 +25,7 @@ const response = await fetch(WP_GRAPHQL_URL, {
           excerpt
           featuredImage {
             node {
-              mediaItemUrl
+              sourceUrl(size: LARGE) # This ensures a higher-quality image
               altText
             }
           }
