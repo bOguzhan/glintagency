@@ -6,7 +6,7 @@ export const languages = {
 export const defaultLang = "tr";
 
 export const ui = {
-    tr: {
+    en: {
         or: "veya",
         contact: "İletişim",
         contacts: "İletişim",
@@ -87,7 +87,7 @@ export const ui = {
         "footer.newsletter2": "abone olun",
         "footer.yourmail": "E-postanız",
     },
-    en: {
+    it: {
         or: "or",
         contact: "Contact",
         contacts: "Contacts",
