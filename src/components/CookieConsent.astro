@@ -2,54 +2,62 @@
 // src/components/CookieConsent.astro
 ---
 
-<div id="consent-banner" style="z-index: 9999; display: none;" class="hidden fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 shadow-2xl rounded-lg p-6 z-50">
+<div id="consent-banner" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 shadow-2xl rounded-lg p-6">
+  
   <h3 class="text-lg font-bold mb-2 text-gray-900">Privacy Settings</h3>
-  <p class="text-sm text-gray-600 mb-4">
-    Choose which cookies you allow. Essential cookies are always on.
-  </p>
-
+  
   <div class="space-y-3 mb-6">
     <label class="flex items-center gap-3 cursor-pointer">
-      <input type="checkbox" id="check-google" class="w-4 h-4 text-blue-600 rounded" checked>
-      <span class="text-sm font-medium text-gray-700">Google Analytics (Statistics)</span>
+      <input type="checkbox" id="check-google" class="w-4 h-4" checked>
+      <span class="text-sm text-gray-700">Google Analytics</span>
     </label>
-    
     <label class="flex items-center gap-3 cursor-pointer">
-      <input type="checkbox" id="check-meta" class="w-4 h-4 text-blue-600 rounded" checked>
-      <span class="text-sm font-medium text-gray-700">Meta Pixel (Marketing)</span>
+      <input type="checkbox" id="check-meta" class="w-4 h-4" checked>
+      <span class="text-sm text-gray-700">Meta Pixel</span>
     </label>
   </div>
 
   <div class="flex flex-col gap-2">
-    <button id="save-consent" class="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition">
+    <button onclick="handleConsentClick(false)" class="w-full bg-black text-white py-2 rounded font-semibold">
       Save Preferences
     </button>
-    <button id="accept-all" class="w-full bg-gray-100 text-gray-800 py-2 rounded font-semibold hover:bg-gray-200 transition text-sm">
+    <button onclick="handleConsentClick(true)" class="w-full bg-gray-100 text-gray-800 py-2 rounded font-semibold text-sm">
       Accept All
     </button>
   </div>
 </div>
 
 <script is:inline>
-  function initConsent() {
+  // 1. Define the handler globally so the buttons can always see it
+  window.handleConsentClick = function(acceptAll) {
     const banner = document.getElementById('consent-banner');
-    if (!banner) return;
+    const googleChecked = document.getElementById('check-google').checked;
+    const metaChecked = document.getElementById('check-meta').checked;
 
-    // Check localStorage
-    const consent = localStorage.getItem('site-consent');
+    const prefs = acceptAll 
+      ? { google: true, meta: true } 
+      : { google: googleChecked, meta: metaChecked };
 
-    if (!consent) {
-      // Force it to show using inline styles for high priority
-      banner.style.setProperty('display', 'block', 'important');
-      banner.classList.remove('hidden');
-    } else {
-      banner.style.display = 'none';
+    // Hide immediately
+    if (banner) banner.style.display = 'none';
+    
+    // Save to storage
+    localStorage.setItem('site-consent', JSON.stringify(prefs));
+    
+    // Reload to fire tracking scripts
+    window.location.reload();
+  };
+
+  // 2. Check visibility on load
+  function checkConsentVisibility() {
+    const banner = document.getElementById('consent-banner');
+    if (banner && !localStorage.getItem('site-consent')) {
+      banner.style.display = 'block';
     }
   }
 
-  // Run on load
-  initConsent();
-
-  // Re-run if you navigate between pages (Astro ViewTransitions support)
-  document.addEventListener('astro:after-swap', initConsent);
+  checkConsentVisibility();
+  document.addEventListener('astro:after-swap', checkConsentVisibility);
 </script>
