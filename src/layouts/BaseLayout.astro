@@ -42,6 +42,24 @@ function cursorFollowerActive() {
 
 <html lang={lang}>
     <head>
+        <script is:inline>
+  (function() {
+    if (sessionStorage.getItem('visited')) {
+      // Add a class to the <html> element immediately
+      document.documentElement.classList.add('no-loader');
+    } else {
+      sessionStorage.setItem('visited', 'true');
+    }
+  })();
+</script>
+
+<style is:global>
+  /* If the 'no-loader' class is present, hide the loader immediately */
+  .no-loader #loader {
+    display: none !important;
+    visibility: hidden !important;
+  }
+</style>
         <BaseHead />
         <AstroSeo {...seo} />
     </head>
