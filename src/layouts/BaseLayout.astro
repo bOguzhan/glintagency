@@ -6,6 +6,7 @@ import BackgroundTexture from "@components/global/BackgroundTexture.astro";
 import Footer from "@components/global/Footer.astro";
 import Navigation from "@components/global/Navigation.astro";
 import { getLangFromUrl } from "../i18n/utils";
+import CookieConsent from '../components/CookieConsent.astro';
 
 const { pathname } = Astro.url;
 
@@ -40,6 +41,38 @@ function cursorFollowerActive() {
 
 <html lang={lang}>
     <head>
+        <script is:inline>
+  const consent = JSON.parse(localStorage.getItem('site-consent') || '{}');
+  
+  if (consent.google) {
+    // Load GA script
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-SGKH91B83F';
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SGKH91B83F');
+  }
+</script>
+<script is:inline>
+  const consent = JSON.parse(localStorage.getItem('site-consent') || '{}');
+    // Load pixel script
+  if (consent.meta) {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+  }
+</script>
         <script is:inline>
             (function() {
                 if (sessionStorage.getItem('visited')) {
@@ -259,6 +292,7 @@ document.addEventListener("astro:after-swap", initHoverSparks);
             lenis.on('scroll', ScrollTrigger.update)
             gsap.ticker.add((time) => { lenis.raf(time * 1000) })
         </script>
+        <slot /> <CookieConsent />
 
         <style is:global>
             html.lenis, html.lenis body { height: auto; }

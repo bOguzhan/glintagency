@@ -1,0 +1,65 @@
+---
+// src/components/CookieConsent.astro
+---
+
+<div id="consent-banner" class="hidden fixed bottom-4 right-4 max-w-sm bg-white border border-gray-200 shadow-2xl rounded-lg p-6 z-50">
+  <h3 class="text-lg font-bold mb-2 text-gray-900">Privacy Settings</h3>
+  <p class="text-sm text-gray-600 mb-4">
+    Choose which cookies you allow. Essential cookies are always on.
+  </p>
+
+  <div class="space-y-3 mb-6">
+    <label class="flex items-center gap-3 cursor-pointer">
+      <input type="checkbox" id="check-google" class="w-4 h-4 text-blue-600 rounded" checked>
+      <span class="text-sm font-medium text-gray-700">Google Analytics (Statistics)</span>
+    </label>
+    
+    <label class="flex items-center gap-3 cursor-pointer">
+      <input type="checkbox" id="check-meta" class="w-4 h-4 text-blue-600 rounded" checked>
+      <span class="text-sm font-medium text-gray-700">Meta Pixel (Marketing)</span>
+    </label>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <button id="save-consent" class="w-full bg-black text-white py-2 rounded font-semibold hover:bg-gray-800 transition">
+      Save Preferences
+    </button>
+    <button id="accept-all" class="w-full bg-gray-100 text-gray-800 py-2 rounded font-semibold hover:bg-gray-200 transition text-sm">
+      Accept All
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  const banner = document.getElementById('consent-banner');
+  const saveBtn = document.getElementById('save-consent');
+  const allBtn = document.getElementById('accept-all');
+  
+  const googleCheck = document.getElementById('check-google');
+  const metaCheck = document.getElementById('check-meta');
+
+  // Check existing consent
+  const existing = localStorage.getItem('site-consent');
+  if (!existing) {
+    banner.classList.remove('hidden');
+  }
+
+  function applyConsent(prefs) {
+    localStorage.setItem('site-consent', JSON.stringify(prefs));
+    banner.classList.add('hidden');
+    
+    // Trigger a page reload or a custom event to fire the tags
+    window.location.reload(); 
+  }
+
+  saveBtn.addEventListener('click', () => {
+    applyConsent({ 
+      google: googleCheck.checked, 
+      meta: metaCheck.checked 
+    });
+  });
+
+  allBtn.addEventListener('click', () => {
+    applyConsent({ google: true, meta: true });
+  });
+</script>
