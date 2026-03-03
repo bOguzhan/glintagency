@@ -11,42 +11,34 @@ const translatePath = useTranslatedPath(lang);
 
 const { class: className } = Astro.props;
 
+// 1. Fetch all projects
+// 2. No more filtering by 'postLang' since we are single-language
+// 3. Slugs are now flat, so we use prj.slug directly
 const allProjects = (await getCollection("projects"))
-	.filter((prj) => {
-		const [postLang, ...slug] = prj.slug.split("/");
-		return postLang === lang;
-	})
-	.map((prj) => {
-		const [postLang, slug] = prj.slug.split("/");
-
-		return {
-			...prj,
-			slug: slug,
-		};
-	})
-	.sort((a, b) => Number(b.data.pubDate) - Number(a.data.pubDate));
+    .sort((a, b) => Number(b.data.pubDate) - Number(a.data.pubDate));
 ---
 
 <section id="projects" class:list={["section work-preview-section home-dark-section py-12", className]}>
-	<div class="col-span-12 col-start-1 mx-auto max-w-7xl">
-		<h2 class="sr-only">{t("projects")}</h2>
-		<ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
-			{
-				allProjects.map((project, index) => (
-					<WokCard
-						image={project.data.image.source}
-						project={project.data.title}
-						link={`/work/${project.slug}`}
-						class={
-							index % 2 === 0
-								? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
-								: `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
-						}
-					/>
-				))
-			}
-		</ol>
-	</div>
+    <div class="col-span-12 col-start-1 mx-auto max-w-7xl">
+        <h2 class="sr-only">{t("projects")}</h2>
+        <ol class="grid grid-cols-1 gap-24 md:grid-cols-2 lg:gap-44">
+            {
+                allProjects.map((project, index) => (
+                    <WokCard
+                        image={project.data.image.source}
+                        project={project.data.title}
+                        /* We point to /work/slug directly */
+                        link={`/work/${project.slug}`} 
+                        class={
+                            index % 2 === 0
+                                ? `md:col-start-1 md:row-start-${Math.floor(index / 2) * 2 + 1} md:row-span-2`
+                                : `md:col-start-2 md:row-start-${Math.floor(index / 2) * 2 + 2} md:row-span-2`
+                        }
+                    />
+                ))
+            }
+        </ol>
+    </div>
 </section>
 
 <style is:global>
