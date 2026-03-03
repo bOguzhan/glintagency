@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import Cta from "@/components/blog/Cta.astro";
 import type { AstroSeoProps } from "@astrolib/seo";
 import Comments from "@components/blog/Comments.astro";
@@ -20,31 +19,19 @@ type Props = {
 
 const { frontmatter, body, seo } = Astro.props;
 
-/** * FIX: Resolve local assets. 
- * This glob finds all images in your assets folder so we can match the frontmatter string to the actual file object.
- */
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/**/*.{jpeg,jpg,png,gif,webp,Webp}');
-
-// 1. Get the raw path from frontmatter (supporting both 'url' or 'source' keys)
-const rawImagePath = frontmatter.image?.source || frontmatter.image?.url;
-
-// 2. Convert alias @assets to the actual filesystem path for matching
-const resolvedPath = rawImagePath?.replace('@assets', '/src/assets');
-
-// 3. Find the optimized image object
-const optimizedImage = images[resolvedPath]?.();
+// 1. Simply get the path. Since it's in /public, it's just a string.
+const postImage = frontmatter.image?.source || frontmatter.image?.url || "https://mintaka.co/opengraph/social-og.jpg";
+const postAlt = frontmatter.image?.alt || frontmatter.title;
 
 function getArticleReadingTime(body: string): number {
     if (!body) return 0;
     const wordsPerMinute = 183;
     const numberOfWords = body.split(/\s/g).length;
     const minutes = numberOfWords / wordsPerMinute;
-    const readTime = Math.ceil(minutes);
-    return readTime;
+    return Math.ceil(minutes);
 }
 
 const readingTime = getArticleReadingTime(body);
-const postAlt = frontmatter.image?.alt || frontmatter.title;
 ---
 
 <BaseLayout seo={seo}>
@@ -72,40 +59,30 @@ const postAlt = frontmatter.image?.alt || frontmatter.title;
             </div>
 
             <div class="mt-12 w-full justify-center">
-                {/* FIXED IMAGE LOGIC: 
-                   If it's a local optimized image, use the object. 
-                   If it's an external URL (https), use the string.
+                {/* FIX: Since images are in /public, we use a standard <img> tag.
+                   Astro's <Image> component is for assets in /src only.
                 */}
-                {optimizedImage ? (
-                    <Image 
-                        class="w-full rounded-lg object-cover" 
-                        src={optimizedImage} 
-                        alt={postAlt} 
-                        width={1200} 
-                        height={630}
-                    />
-                ) : (
-                    <img 
-                        class="w-full rounded-lg object-cover" 
-                        src={rawImagePath || "https://mintaka.co/opengraph/social-og.jpg"} 
-                        alt={postAlt} 
-                    />
-                )}
+                <img 
+                    class="w-full rounded-lg object-cover shadow-xl" 
+                    src={postImage} 
+                    alt={postAlt} 
+                    loading="eager"
+                />
 
                 <div class="flex justify-between px-2 pt-4 font-mono text-sm">
                     <div class="flex flex-wrap gap-1">
-                        {frontmatter?.tags?.length > 0 && <span class="py-3">TAGS:</span>}
+                        {frontmatter?.tags?.length > 0 && <span class="py-3 text-slate-400">TAGS:</span>}
                         <ul class="flex flex-wrap justify-center">
                             {
                                 frontmatter?.tags?.map((tag: string) => (
-                                    <li class="inline-flex items-center rounded-full px-1 py-3 font-medium uppercase tracking-widest">
+                                    <li class="inline-flex items-center rounded-full px-1 py-3 font-medium uppercase tracking-widest text-slate-600 hover:text-black">
                                         <a href={`/tags/${tag}`}>{tag}</a>
                                     </li>
                                 ))
                             }
                         </ul>
                     </div>
-                    <span class="py-3">~{readingTime} MIN</span>
+                    <span class="py-3 text-slate-400">~{readingTime} MIN</span>
                 </div>
 
                 <div class="prose-styles mt-12">
