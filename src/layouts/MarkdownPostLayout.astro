@@ -62,12 +62,7 @@ const readingTime = getArticleReadingTime(body);
                 {/* FIX: Since images are in /public, we use a standard <img> tag.
                    Astro's <Image> component is for assets in /src only.
                 */}
-                <img 
-                    class="w-full rounded-lg object-cover shadow-xl" 
-                    src={postImage} 
-                    alt={postAlt} 
-                    loading="eager"
-                />
+
 
                 <div class="flex justify-between px-2 pt-4 font-mono text-sm">
                     <div class="flex flex-wrap gap-1">
