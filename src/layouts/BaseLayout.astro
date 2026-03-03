@@ -48,6 +48,8 @@ function cursorFollowerActive() {
     <body class="bg-slate-50">
         <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-transparent pointer-events-none">
   
+            <div id="preloader-bg" class="absolute inset-0 bg-white z-0 pointer-events-auto"></div>
+
             <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
             <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
 
@@ -66,7 +68,7 @@ function cursorFollowerActive() {
             </div>
 
             <div id="loader-content" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-                <div class="flex items-baseline text-white">
+                <div class="flex items-baseline text-white mix-blend-difference">
                     <span id="loader-percent" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
                     <span class="text-[5vw] font-light ml-2">%</span>
                 </div>
@@ -89,13 +91,14 @@ function cursorFollowerActive() {
                 const wineWrapper = document.querySelector("#wine-wrapper");
                 const wineCurve = document.querySelector("#wine-curve");
                 const preloader = document.querySelector("#preloader");
+                const preloaderBg = document.querySelector("#preloader-bg");
                 const preloaderTop = document.querySelector("#preloader-top");
                 const preloaderBottom = document.querySelector("#preloader-bottom");
                 const loaderContent = document.querySelector("#loader-content");
                 
                 if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-                // 1. WAVE ANIMATION (Loops independently)
+                // 1. PERSISTENT WAVE MOTION
                 gsap.to(".parallax use", {
                     x: (i) => i % 2 === 0 ? -45 : 35,
                     repeat: -1,
@@ -104,7 +107,7 @@ function cursorFollowerActive() {
                     yoyo: true
                 });
 
-                // 2. THE MAIN FILL TIMELINE (1.8 Seconds)
+                // 2. THE 1.8s FILL TIMELINE
                 const tl = gsap.timeline();
                 const counter = { val: 0 };
 
@@ -124,11 +127,12 @@ function cursorFollowerActive() {
                 }, 0);
 
                 // 3. THE HAND-OFF AT 100%
-                // Show the solid shutter panels and hide the fill/waves/text instantly
+                // Kill background, fill, waves, and text instantly
+                // Reveal the shutter panels for the final split
                 tl.set([preloaderTop, preloaderBottom], { opacity: 1 });
-                tl.set([wineWrapper, loaderContent], { display: "none" });
+                tl.set([preloaderBg, wineWrapper, loaderContent], { display: "none" });
 
-                // 4. THE SPLIT REVEAL
+                // 4. THE SPLIT REVEAL (THE CURTAINS)
                 tl.to(preloaderTop, {
                     yPercent: -100,
                     duration: 1.1,
@@ -146,7 +150,7 @@ function cursorFollowerActive() {
                 }, "<"); 
             }
 
-            // Sparkle Logic
+            // Sparkle Particle Cursor
             const container = document.getElementById('sparkle-container');
             const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
             window.addEventListener("mousemove", (e) => {
