@@ -15,7 +15,7 @@ type Props = {
 
 const { seo: seoProp } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
-const shareImage = new URL("/images/meta/mintaka_share.gif", Astro.site).toString();
+const shareImage = "/images/meta/mintaka_share.gif";
 
 const defaultSeo: AstroSeoProps = {
     title: "Design Agency Leading in Performant Web Design Solutions - Glint Agency",
