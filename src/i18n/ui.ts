@@ -1,13 +1,13 @@
 export const languages = {
-    tr: "Türkçe",
-    en: "English",
+	en: "English",
+	it: "Italiano",
 };
 
-export const defaultLang = "tr";
+export const defaultLang = "en";
 
 export const ui = {
-    en: {
-        or: "veya",
+	en: {
+or: "veya",
         contact: "İletişim",
         contacts: "İletişim",
         contactus: "Bize Ulaşın",
@@ -86,9 +86,9 @@ export const ui = {
         "footer.newsletter": "Bültenimize",
         "footer.newsletter2": "abone olun",
         "footer.yourmail": "E-postanız",
-    },
-    it: {
-        or: "or",
+	},
+	it: {
+		or: "or",
         contact: "Contact",
         contacts: "Contacts",
         contactus: "Contact us",
@@ -167,7 +167,7 @@ export const ui = {
         "footer.newsletter": "Subscribe to",
         "footer.newsletter2": "our newsletter",
         "footer.yourmail": "Your email",
-    },
+	},
 } as const;
 
 export const showDefaultLang = false;
