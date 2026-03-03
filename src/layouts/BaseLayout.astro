@@ -46,7 +46,7 @@ function cursorFollowerActive() {
         <AstroSeo {...seo} />
     </head>
     <body class="bg-slate-50">
-        <div id="preloader" class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-transparent pointer-events-none">
+        <div id="preloader" class="fixed inset-0 z-[100] overflow-hidden bg-transparent pointer-events-none">
   
             <div id="preloader-bg" class="absolute inset-0 bg-white z-0 pointer-events-auto"></div>
 
@@ -67,12 +67,12 @@ function cursorFollowerActive() {
                 </svg>
             </div>
 
-            <div id="loader-content" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-                <div class="flex items-baseline text-white mix-blend-difference">
-                    <span id="loader-percent" class="text-[18vw] font-black leading-none tracking-tighter">0</span>
-                    <span class="text-[5vw] font-light ml-2">%</span>
-                </div>
-            </div>
+            <div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
+    <div class="flex items-baseline text-white mix-blend-difference">
+        <span id="loader-percent" class="text-[15vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter">0</span>
+        <span class="text-[5vw] md:text-[3vw] font-light ml-2">%</span>
+    </div>
+</div>
         </div>
 
         <BackgroundTexture />
@@ -97,7 +97,7 @@ function cursorFollowerActive() {
                 
                 if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-                // 1. MULTI-LAYERED WATER MOTION
+                // 1. WATER MOTION
                 const layers = document.querySelectorAll(".parallax-water use");
                 layers.forEach((layer, i) => {
                     gsap.to(layer, {
