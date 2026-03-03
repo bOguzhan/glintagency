@@ -13,7 +13,7 @@ const translatePath = useTranslatedPath(lang);
 
 let pages = [
 	{
-		title: "Home",
+		title: "Ana Sayfa",
 		url: "/",
 	},
 	// {
@@ -21,7 +21,7 @@ let pages = [
 	// 	url: "/services",
 	// },
 	{
-		title: "Portfolio",
+		title: "Portfolyo",
 		url: "/blog/",
 	},
 	{
@@ -112,7 +112,7 @@ const { pathname } = Astro.url;
 									</li>
 								))
 							}
-							<li>
+						<!-- 	<li>
 								<a href={translatePath(path, `${lang === "it" ? "en" : "it"}`)} class="inline-block cursor-pointer px-1 py-[0.33rem]">
 									<span class="menu-item-container inline-block">
 										<span
@@ -121,7 +121,7 @@ const { pathname } = Astro.url;
 										</span>
 									</span>
 								</a>
-							</li>
+							</li>-->
 						</ul>
 					</nav>
 				</div>
