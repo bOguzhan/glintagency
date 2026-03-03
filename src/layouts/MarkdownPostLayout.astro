@@ -51,7 +51,7 @@ const readingTime = getArticleReadingTime(body);
 
                 {
                     frontmatter?.link && (
-                        <a class="font-mono text-xl font-bold" href={frontmatter?.link} target="_blank">
+                        <a class="display-hidden font-mono text-xl font-bold" href={frontmatter?.link} target="_blank">
                             <Icon name="iconamoon:link-external-thin" class="inline" /> {t("blog.gotoproject")}
                         </a>
                     )
