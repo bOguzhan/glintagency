@@ -116,7 +116,7 @@ function cursorFollowerActive() {
     tl.to(counter, {
         val: 100,
         duration: 3,
-        ease: "power3.out", 
+        ease: "power2.out", 
         onUpdate: () => {
             percentText.innerText = Math.floor(counter.val);
         }
@@ -124,8 +124,8 @@ function cursorFollowerActive() {
 
     tl.to(wineWrapper, {
         height: "100%",
-        duration: 3,
-        ease: "power3.out"
+        duration: 1.8,
+        ease: "power2.out"
     }, 0);
 
     // 3. THE INSTANT SPLIT (Happens at the 3s mark)
