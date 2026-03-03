@@ -176,39 +176,78 @@ function cursorFollowerActive() {
             }
 
             // Sparkle logic
-            const container = document.getElementById('sparkle-container');
-            const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
-            window.addEventListener("mousemove", (e) => {
-                if(container) createSparkle(e.clientX, e.clientY);
-            });
+            // --- IMPROVED SPARKLE LOGIC ---
+const container = document.getElementById('sparkle-container');
+const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
 
-            function createSparkle(x, y) {
-                const sparkle = document.createElement("div");
-                const size = Math.random() * 8 + 8; 
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                Object.assign(sparkle.style, {
-                    position: "absolute",
-                    left: `${x}px`,
-                    top: `${y}px`,
-                    width: `${size}px`,
-                    height: `${size}px`,
-                    backgroundColor: color,
-                    clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
-                    pointerEvents: "none",
-                    zIndex: "9999"
-                });
-                if(container) container.appendChild(sparkle);
-                gsap.to(sparkle, {
-                    duration: 0.8,
-                    x: (Math.random() - 0.5) * 100, 
-                    y: (Math.random() - 0.5) * 100,
-                    scale: 0,
-                    opacity: 0,
-                    ease: "power1.out",
-                    onComplete: () => sparkle.remove()
-                });
-            }
+// 1. Existing Mouse Trail
+window.addEventListener("mousemove", (e) => {
+    if(container) createSparkle(e.clientX, e.clientY);
+});
 
+// 2. NEW: Hover "Shoot Out" Effect
+function shootSparks(element) {
+    const rect = element.getBoundingClientRect();
+    // Create a burst of 10 sparkles around the element
+    for (let i = 0; i < 10; i++) {
+        const x = rect.left + Math.random() * rect.width;
+        const y = rect.top + Math.random() * rect.height;
+        createSparkle(x, y, true); // Added 'true' flag for higher velocity
+    }
+}
+
+// 3. Attach Listeners to Buttons and Images
+function initHoverSparks() {
+    const targets = document.querySelectorAll('button, a, img, .sparkle-target');
+    targets.forEach(target => {
+        target.addEventListener('mouseenter', () => shootSparks(target));
+    });
+}
+
+function createSparkle(x, y, isBurst = false) {
+    if (!container) return;
+    
+    const sparkle = document.createElement("div");
+    const size = Math.random() * 8 + 8; 
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    Object.assign(sparkle.style, {
+        position: "absolute",
+        left: `${x}px`,
+        top: `${y}px`,
+        width: `${size}px`,
+        height: `${size}px`,
+        backgroundColor: color,
+        clipPath: "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)",
+        pointerEvents: "none",
+        zIndex: "9999"
+    });
+    
+    container.appendChild(sparkle);
+    
+    // If it's a burst (hover), make them fly further and faster
+    const velocity = isBurst ? 200 : 100;
+    
+    gsap.to(sparkle, {
+        duration: isBurst ? 1.2 : 0.8,
+        x: (Math.random() - 0.5) * velocity, 
+        y: (Math.random() - 0.5) * velocity,
+        rotation: Math.random() * 180,
+        scale: 0,
+        opacity: 0,
+        ease: "power2.out",
+        onComplete: () => sparkle.remove()
+    });
+}
+
+// Initialize everything
+document.addEventListener("DOMContentLoaded", () => {
+    initLoader();
+    initHoverSparks();
+});
+
+// If using Astro View Transitions, re-run on page swap
+document.addEventListener("astro:after-swap", initHoverSparks);
             document.addEventListener("DOMContentLoaded", initLoader);
         </script>
 
