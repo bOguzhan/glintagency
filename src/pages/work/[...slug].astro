@@ -2,26 +2,27 @@
 import { getEntry, render } from "astro:content";
 import MarkdownPostLayout from "../../layouts/MarkdownPostLayout.astro";
 
-// 1. Get the slug from the URL (e.g., "studiovision")
+// 1. Get the slug from the URL
 const { slug } = Astro.params;
 
-// 2. Fetch the entry by combining the 'en/' prefix with the slug
-// We use 'en/' here assuming your main site is English.
-const entry = await getEntry("projects", `en/${slug}`);
+// 2. Fetch the entry directly using the slug. 
+// We REMOVE the "en/" prefix because your files are now at the root of /projects/
+const entry = await getEntry("projects", slug as any);
 
-// 3. If not found in 'en', or just as a safety 404
+// 3. Proper 404 handling
 if (!entry) {
-    console.error(`Project not found at: projects/en/${slug}`);
+    console.error(`Project not found at: projects/${slug}`);
     return Astro.redirect("/404");
 }
 
-// 4. Use the new Astro 5.0+ render function
+// 4. Render the content
 const { Content } = await render(entry);
 
 const seo = {
     title: `${entry.data.title} - Glint Ajans`,
     description: entry.data.description,
-    canonical: `https://89.168.120.151/work/${slug}/`,
+    // Use the IP for the canonical if you don't have a domain yet
+    canonical: `http://89.168.120.151/work/${slug}/`,
 };
 ---
 
