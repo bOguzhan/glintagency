@@ -54,15 +54,15 @@ function cursorFollowerActive() {
             <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
 
             <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
-                <svg class="absolute left-0 w-[400%] h-[150px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -148px;">
+                <svg class="absolute left-0 w-[200%] h-[120px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -110px;">
                     <defs>
-                        <path id="choppy-wave" d="M-160 44c15 0 29-20 44-20s 29 20 44 20 29-20 44-20 29 20 44 20 v44h-176z" />
+                        <path id="tight-wave" d="M-160 44c10 0 10-15 20-15s 10 15 20 15 10-15 20-15 10 15 20 15 v44h-80z" />
                     </defs>
-                    <g class="parallax">
-                        <use xlink:href="#choppy-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-                        <use xlink:href="#choppy-wave" x="48" y="3" fill="rgba(128, 0, 32, 0.5)" />
-                        <use xlink:href="#choppy-wave" x="48" y="5" fill="rgba(128, 0, 32, 0.7)" />
-                        <use xlink:href="#choppy-wave" x="48" y="7" fill="#800020" />
+                    <g class="parallax-water">
+                        <use xlink:href="#tight-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+                        <use xlink:href="#tight-wave" x="48" y="2" fill="rgba(128, 0, 32, 0.5)" />
+                        <use xlink:href="#tight-wave" x="48" y="4" fill="rgba(128, 0, 32, 0.8)" />
+                        <use xlink:href="#tight-wave" x="48" y="6" fill="#800020" />
                     </g>
                 </svg>
             </div>
@@ -89,7 +89,6 @@ function cursorFollowerActive() {
             function initLoader() {
                 const percentText = document.querySelector("#loader-percent");
                 const wineWrapper = document.querySelector("#wine-wrapper");
-                const wineCurve = document.querySelector("#wine-curve");
                 const preloader = document.querySelector("#preloader");
                 const preloaderBg = document.querySelector("#preloader-bg");
                 const preloaderTop = document.querySelector("#preloader-top");
@@ -98,16 +97,19 @@ function cursorFollowerActive() {
                 
                 if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-                // 1. PERSISTENT WAVE MOTION
-                gsap.to(".parallax use", {
-                    x: (i) => i % 2 === 0 ? -45 : 35,
-                    repeat: -1,
-                    duration: 0.6,
-                    ease: "sine.inOut",
-                    yoyo: true
+                // 1. MULTI-LAYERED WATER MOTION
+                const layers = document.querySelectorAll(".parallax-water use");
+                layers.forEach((layer, i) => {
+                    gsap.to(layer, {
+                        x: i % 2 === 0 ? -30 : 30,
+                        duration: 0.5 + (i * 0.1),
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
                 });
 
-                // 2. THE 1.8s FILL TIMELINE
+                // 2. TIMELINE
                 const tl = gsap.timeline();
                 const counter = { val: 0 };
 
@@ -126,13 +128,11 @@ function cursorFollowerActive() {
                     ease: "power2.inOut"
                 }, 0);
 
-                // 3. THE HAND-OFF AT 100%
-                // Kill background, fill, waves, and text instantly
-                // Reveal the shutter panels for the final split
+                // 3. THE HAND-OFF
                 tl.set([preloaderTop, preloaderBottom], { opacity: 1 });
                 tl.set([preloaderBg, wineWrapper, loaderContent], { display: "none" });
 
-                // 4. THE SPLIT REVEAL (THE CURTAINS)
+                // 4. THE SPLIT
                 tl.to(preloaderTop, {
                     yPercent: -100,
                     duration: 1.1,
@@ -150,7 +150,7 @@ function cursorFollowerActive() {
                 }, "<"); 
             }
 
-            // Sparkle Particle Cursor
+            // Sparkle logic
             const container = document.getElementById('sparkle-container');
             const colors = ["#800020", "#800020", "#800020", "#FFD700"]; 
             window.addEventListener("mousemove", (e) => {
