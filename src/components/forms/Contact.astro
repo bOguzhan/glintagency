@@ -1,6 +1,5 @@
 ---
 import Title from "@components/global/Title.astro";
-
 import { getLangFromUrl, useTranslations, useTranslatedPath } from "@i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
@@ -9,54 +8,120 @@ const translatePath = useTranslatedPath(lang);
 ---
 
 <section class="isolate px-6 py-24 sm:py-32 lg:px-8">
-	<div class="absolute inset-x-0 top-[-10rem] transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]" aria-hidden="true">
-		<div class="gradient-element"></div>
-	</div>
-	<div class="mx-auto">
-		<Title class="pb-10 pt-20 uppercase" title={t("contact.title")} subtitle={t("contact.subtitle")} />
-		<form 
-  action="/mail-handler.php" 
-  method="POST" 
-  class="mx-auto max-w-2xl pt-12 lg:pt-20"
->
-			<div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-				<div class="form-field sm:col-span-2">
-					<label for="name" class="form-label">{t("contact.name")}*</label>
-					<input type="text" name="name" id="name" autocomplete="given-name" required />
-				</div>
-				<div class="form-field sm:col-span-2">
-					<label for="email" class="form-label">{t("contact.email")}*</label>
-					<input type="email" name="email" id="email" autocomplete="email" required />
-				</div>
-				<div class="form-field sm:col-span-2">
-					<label for="company" class="form-label">{t("contact.company")}</label>
-					<input type="text" name="company" id="company" autocomplete="organization" />
-				</div>
-				<div class="form-field sm:col-span-2">
-					<label for="message" class="form-label">{t("contact.message")}*</label>
-					<textarea name="message" id="message" rows="4" required></textarea>
-				</div>
-				<div class="flex gap-x-4 sm:col-span-2">
-					<label class="text-sm leading-6 text-gray-600" id="switch-1-label">
-						{t("contact.agree")}
-						<a href="/privacy" class="font-semibold text-slate-800">privacy policy</a>.
-					</label>
-				</div>
-			</div>
-			<div class="flex pt-10">
-				<div class="squircle-bg rounded-lg bg-zinc-900">
-					<button
-						type="submit"
-						class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10">
-						{t("contact.send")}
-					</button>
-				</div>
-			</div>
-		</form>
-	</div>
+    <div class="mx-auto">
+        <Title class="pb-10 pt-20 uppercase" title={t("contact.title")} subtitle={t("contact.subtitle")} />
+        
+        <form 
+            id="contact-form"
+            action="/mail-handler.php" 
+            method="POST" 
+            class="mx-auto max-w-2xl pt-12 lg:pt-20"
+        >
+            <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                <div class="form-field sm:col-span-2">
+                    <label for="name" class="form-label">{t("contact.name")}*</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+                <div class="form-field sm:col-span-2">
+                    <label for="email" class="form-label">{t("contact.email")}*</label>
+                    <input type="email" name="email" id="email" required />
+                </div>
+                <div class="form-field sm:col-span-2">
+                    <label for="company" class="form-label">{t("contact.company")}</label>
+                    <input type="text" name="company" id="company" />
+                </div>
+                <div class="form-field sm:col-span-2">
+                    <label for="message" class="form-label">{t("contact.message")}*</label>
+                    <textarea name="message" id="message" rows="4" required></textarea>
+                </div>
+            </div>
+
+            <div class="flex pt-10">
+                <div class="squircle-bg rounded-lg bg-zinc-900">
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="flex h-10 w-full max-w-52 flex-1 items-center justify-center px-4 py-2 text-xl text-slate-200 transition-all hover:text-white sm:w-auto md:font-bold lg:h-10">
+                        <span id="btn-text">{t("contact.send")}</span>
+                        <span id="btn-loader" class="hidden">...</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="status-modal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="mx-4 w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-2xl">
+            <div id="modal-icon" class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full"></div>
+            <h3 id="modal-title" class="mb-2 text-2xl font-bold text-gray-900"></h3>
+            <p id="modal-message" class="mb-6 text-gray-600"></p>
+            <button id="close-modal" class="w-full rounded-lg bg-zinc-900 py-3 font-semibold text-white transition-colors hover:bg-zinc-800">
+                Close
+            </button>
+        </div>
+    </div>
 </section>
 
+<script is:inline>
+    const form = document.getElementById('contact-form');
+    const modal = document.getElementById('status-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalIcon = document.getElementById('modal-icon');
+    const btnText = document.getElementById('btn-text');
+    const btnLoader = document.getElementById('btn-loader');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // UI Loading State
+        btnText.classList.add('hidden');
+        btnLoader.classList.remove('hidden');
+
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                showModal('success');
+                form.reset();
+            } else {
+                showModal('error');
+            }
+        } catch (error) {
+            showModal('error');
+        } finally {
+            btnText.classList.remove('hidden');
+            btnLoader.classList.add('hidden');
+        }
+    });
+
+    function showModal(type) {
+        modal.classList.remove('hidden');
+        if (type === 'success') {
+            modalTitle.innerText = "Success!";
+            modalMessage.innerText = "Your message has been sent successfully.";
+            modalIcon.innerHTML = "✓";
+            modalIcon.className = "mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600 text-2xl";
+        } else {
+            modalTitle.innerText = "Oops!";
+            modalMessage.innerText = "Something went wrong. Please try again later.";
+            modalIcon.innerHTML = "✕";
+            modalIcon.className = "mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 text-2xl";
+        }
+    }
+
+    document.getElementById('close-modal').addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+</script>
+
 <style>
+
 	.gradient-element {
 		@apply relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem];
 		clip-path: polygon(
