@@ -126,7 +126,7 @@ function cursorFollowerActive() {
         <BackgroundTexture />
         <Navigation />
         {cursorFollowerActive() && <BlobCursorFollower />}
-        
+        <slot />
         <Footer />
         
         <div id="sparkle-container" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;"></div>
@@ -291,7 +291,7 @@ document.addEventListener("astro:after-swap", initHoverSparks);
             lenis.on('scroll', ScrollTrigger.update)
             gsap.ticker.add((time) => { lenis.raf(time * 1000) })
         </script>
-        <slot /> <CookieConsent />
+     <CookieConsent />
 
         <style is:global>
             html.lenis, html.lenis body { height: auto; }
