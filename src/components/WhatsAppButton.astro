@@ -1,0 +1,31 @@
+---
+interface Props {
+  phone: string;
+  message?: string;
+}
+
+const { phone, message = "Hello!" } = Astro.props;
+const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer" class="whatsapp-button">
+  <span>Contact us on WhatsApp</span>
+</a>
+
+<style>
+  .whatsapp-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: #25D366;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .whatsapp-button:hover {
+    background-color: #128C7E;
+  }
+</style>
