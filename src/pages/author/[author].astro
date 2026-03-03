@@ -5,25 +5,27 @@ import Author from "@components/blog/Author.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-	const authors = await getCollection("authors");
+    const authors = await getCollection("authors");
 
-	return authors
-		.map((entry) => {
-			const [lang, ...slug] = entry.slug.split("/");
-			return { params: { lang, author: slug.join("/") || undefined }, props: entry };
-		})
-		.filter((entry) => entry.params.lang === "en");
+    return authors.map((entry) => {
+        // We no longer split by "/" because the slug is flat
+        return { 
+            params: { author: entry.slug }, 
+            props: entry 
+        };
+    });
 }
 
 const author = Astro.props;
 
 const seo: AstroSeoProps = {
-	title: author.data.name,
-	description: author.data.description,
-	canonical: `https://mintaka.co/author/${author.slug}/`,
+    title: author.data.name,
+    description: author.data.description,
+    // Ensure your canonical URL matches your new flat structure
+    canonical: `https://mintaka.co/author/${author.slug}/`,
 };
 ---
 
 <BaseLayout seo={seo}>
-	<Author author={author} />
+    <Author author={author} />
 </BaseLayout>
