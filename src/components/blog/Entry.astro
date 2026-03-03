@@ -17,35 +17,31 @@ const fallbackImage = "https://mintaka.co/opengraph/social-og.jpg";
         <div
             class:list={[
                 "article-overlay relative block w-full overflow-hidden lg:col-span-2",
-                /* We added 'aspect-[3/2]' here for a taller, bigger look */
-                titleInside ? "article-gradient-overlay-bottom aspect-[3/2]" : "article-gradient-overlay aspect-[3/2]",
+                titleInside ? "article-gradient-overlay-bottom" : "article-gradient-overlay",
             ]}>
+            {/* We use inferSize for remote images so you don't have to 
+               manually define width/height for every WP upload.
+            */}
             <Image 
-                /* 1. Changed aspect ratio to 3/2 (Standard photography size)
-                   2. Added 'transition-transform' for a smooth hover effect
-                   3. Replaced h-full with h-auto to respect the new ratio
-                */
-                class="relative aspect-[3/2] h-auto w-full bg-center object-cover transition-transform duration-500 group-hover:scale-105" 
+                class="relative aspect-[384/246] h-full w-full bg-center object-cover" 
                 src={image || fallbackImage} 
                 alt={title} 
-                width={1200}  /* Increased to 1200 for better clarity */
-                height={800}  /* Matches 3:2 ratio */
-                format="webp" 
-                quality="mid"
+                width={800} 
+                height={450}
+				
             />
         </div>
         <div
-            class={`flex w-full flex-1 flex-col items-start justify-between ${
+            class={`flex w-full flex-1 flex-col items-start justify-between  ${
                 titleInside ? "absolute bottom-0 text-white p-12" : "text-black pt-4 md:p-2 md:pt-6"
             }`}>
             <div class="w-full">
                 <div>
-                    /* Slightly increased the title size to match the bigger image */
-                    <p class="font-mono text-xl font-bold uppercase tracking-wide lg:text-2xl">
+                    <p class="font-mono text-lg font-medium uppercase tracking-wide lg:text-xl">
                         {title}
                     </p>
                 </div>
-                <p class={`mt-2 line-clamp-3 text-base ${titleInside ? "text-slate-200" : "text-slate-600"}`}>
+                <p class={`mt-2 line-clamp-3 text-base  ${titleInside ? "text-slate-200" : "text-slate-600"}`}>
                     {description}
                 </p>
             </div>
