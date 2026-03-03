@@ -14,9 +14,7 @@ type Props = {
 };
 
 const { seo: seoProp } = Astro.props;
-
 const lang = getLangFromUrl(Astro.url);
-
 const shareImage = new URL("/images/meta/mintaka_share.gif", Astro.site).toString();
 
 const defaultSeo: AstroSeoProps = {
@@ -43,58 +41,54 @@ function cursorFollowerActive() {
 <html lang={lang}>
     <head>
         <script is:inline>
-  (function() {
-    if (sessionStorage.getItem('visited')) {
-      // Add a class to the <html> element immediately
-      document.documentElement.classList.add('no-loader');
-    } else {
-      sessionStorage.setItem('visited', 'true');
-    }
-  })();
-</script>
+            (function() {
+                if (sessionStorage.getItem('visited')) {
+                    document.documentElement.classList.add('no-loader');
+                } else {
+                    sessionStorage.setItem('visited', 'true');
+                }
+            })();
+        </script>
 
-<style is:global>
-  /* If the 'no-loader' class is present, hide the loader immediately */
-  .no-loader #loader {
-    display: none !important;
-    visibility: hidden !important;
-  }
-</style>
+        <style is:global>
+            /* Hide the preloader immediately if class is present */
+            .no-loader #preloader {
+                display: none !important;
+            }
+        </style>
+        
         <BaseHead />
         <AstroSeo {...seo} />
     </head>
     <body class="bg-slate-50">
         <div id="preloader" class="fixed inset-0 z-[100] overflow-hidden bg-transparent pointer-events-none">
-  
             <div id="preloader-bg" class="absolute inset-0 bg-white z-0 pointer-events-auto"></div>
-
             <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
             <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
 
-<div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
-    <svg class="absolute left-0 w-[400%] h-[180px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -170px;">
-        <defs>
-            <path id="tight-wave" d="M-160 44c30 0 30-25 60-25s 30 25 60 25 30-25 60-25 30 25 60 25 v44h-240z" />
-        </defs>
-        <g class="parallax-water">
-            <use xlink:href="#tight-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-            <use xlink:href="#tight-wave" x="48" y="2" fill="rgba(128, 0, 32, 0.5)" />
-            <use xlink:href="#tight-wave" x="48" y="4" fill="rgba(128, 0, 32, 0.8)" />
-            <use xlink:href="#tight-wave" x="48" y="6" fill="#800020" />
-        </g>
-    </svg>
-</div>
+            <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
+                <svg class="absolute left-0 w-[400%] h-[180px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -170px;">
+                    <defs>
+                        <path id="tight-wave" d="M-160 44c30 0 30-25 60-25s 30 25 60 25 30-25 60-25 30 25 60 25 v44h-240z" />
+                    </defs>
+                    <g class="parallax-water">
+                        <use xlink:href="#tight-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+                        <use xlink:href="#tight-wave" x="48" y="2" fill="rgba(128, 0, 32, 0.5)" />
+                        <use xlink:href="#tight-wave" x="48" y="4" fill="rgba(128, 0, 32, 0.8)" />
+                        <use xlink:href="#tight-wave" x="48" y="6" fill="#800020" />
+                    </g>
+                </svg>
+            </div>
 
-<div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
-    <div class="flex items-baseline text-white mix-blend-difference">
-        <svg class="w-[8vw] md:w-[5vw] h-auto mr-4 fill-current" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 0C55 45 95 45 100 50C95 55 55 55 50 100C45 55 5 55 0 50C5 45 45 45 50 0Z" />
-        </svg>
-        
-        <span id="loader-percent" class="text-[15vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter">0</span>
-        <span class="text-[5vw] md:text-[3vw] font-light ml-2">%</span>
-    </div>
-</div>
+            <div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
+                <div class="flex items-baseline text-white mix-blend-difference">
+                    <svg class="w-[8vw] md:w-[5vw] h-auto mr-4 fill-current" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 0C55 45 95 45 100 50C95 55 55 55 50 100C45 55 5 55 0 50C5 45 45 45 50 0Z" />
+                    </svg>
+                    <span id="loader-percent" class="text-[15vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter">0</span>
+                    <span class="text-[5vw] md:text-[3vw] font-light ml-2">%</span>
+                </div>
+            </div>
         </div>
 
         <BackgroundTexture />
@@ -109,6 +103,13 @@ function cursorFollowerActive() {
             import { gsap } from "gsap";
 
             function initLoader() {
+                // If the user already visited, don't run animation logic
+                if (document.documentElement.classList.contains('no-loader')) {
+                    const preloader = document.querySelector("#preloader");
+                    if (preloader) preloader.style.display = "none";
+                    return;
+                }
+
                 const percentText = document.querySelector("#loader-percent");
                 const wineWrapper = document.querySelector("#wine-wrapper");
                 const preloader = document.querySelector("#preloader");
@@ -119,28 +120,23 @@ function cursorFollowerActive() {
                 
                 if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
- // 1. SEA-LIKE WAVE MOTION
-const layers = document.querySelectorAll(".parallax-water use");
-layers.forEach((layer, i) => {
-    // We move each layer at a different speed and distance
-    gsap.to(layer, {
-        x: i % 2 === 0 ? -200 : -150, // Move left
-        duration: 3 + (i * 1),        // Different speeds for parallax effect
-        repeat: -1,                   // Loop forever
-        ease: "none"                  // Constant speed for natural flow
-    });
+                const layers = document.querySelectorAll(".parallax-water use");
+                layers.forEach((layer, i) => {
+                    gsap.to(layer, {
+                        x: i % 2 === 0 ? -200 : -150,
+                        duration: 3 + (i * 1),
+                        repeat: -1,
+                        ease: "none"
+                    });
+                    gsap.to(layer, {
+                        y: i % 2 === 0 ? 5 : -5,
+                        duration: 2 + (i * 0.5),
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                });
 
-    // Add a slight vertical "bobbing" to the waves
-    gsap.to(layer, {
-        y: i % 2 === 0 ? 5 : -5,
-        duration: 2 + (i * 0.5),
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-    });
-});
-
-                // 2. TIMELINE
                 const tl = gsap.timeline();
                 const counter = { val: 0 };
 
@@ -159,11 +155,9 @@ layers.forEach((layer, i) => {
                     ease: "power2.inOut"
                 }, 0);
 
-                // 3. THE HAND-OFF
                 tl.set([preloaderTop, preloaderBottom], { opacity: 1 });
                 tl.set([preloaderBg, wineWrapper, loaderContent], { display: "none" });
 
-                // 4. THE SPLIT
                 tl.to(preloaderTop, {
                     yPercent: -100,
                     duration: 1.1,
@@ -175,7 +169,7 @@ layers.forEach((layer, i) => {
                     duration: 1.1,
                     ease: "expo.inOut",
                     onComplete: () => {
-                        preloader.style.display = "none";
+                        if (preloader) preloader.style.display = "none";
                         if (typeof window.init === "function") window.init();
                     }
                 }, "<"); 
@@ -203,7 +197,7 @@ layers.forEach((layer, i) => {
                     pointerEvents: "none",
                     zIndex: "9999"
                 });
-                container.appendChild(sparkle);
+                if(container) container.appendChild(sparkle);
                 gsap.to(sparkle, {
                     duration: 0.8,
                     x: (Math.random() - 0.5) * 100, 
@@ -226,40 +220,6 @@ layers.forEach((layer, i) => {
             lenis.on('scroll', ScrollTrigger.update)
             gsap.ticker.add((time) => { lenis.raf(time * 1000) })
         </script>
-        <script is:inline>
-  const loader = document.getElementById('loader');
-  
-  // Check if the user has already seen the animation in this session
-  if (sessionStorage.getItem('visited')) {
-    // If they have, hide the loader immediately with no animation
-    if (loader) {
-        loader.style.display = 'none';
-    }
-  } else {
-    // If it's the first time, keep the loader visible
-    // and set the flag so they don't see it again
-    sessionStorage.setItem('visited', 'true');
-    
-    // Add an event listener to hide it after your animation finishes
-    // Adjust the timeout to match your animation duration
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        if (loader) {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 500); // Fade out duration
-        }
-      }, 1500); // How long the loader stays visible
-    });
-  }
-</script>
-
-<style>
-  #loader {
-    transition: opacity 0.5s ease-in-out;
-  }
-</style>
 
         <style is:global>
             html.lenis, html.lenis body { height: auto; }
