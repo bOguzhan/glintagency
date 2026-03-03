@@ -13,79 +13,107 @@ const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
 type Props = {
-	frontmatter: any;
-	body: string;
-	seo?: AstroSeoProps;
+    frontmatter: any;
+    body: string;
+    seo?: AstroSeoProps;
 };
 
 const { frontmatter, body, seo } = Astro.props;
 
+/** * FIX: Resolve local assets. 
+ * This glob finds all images in your assets folder so we can match the frontmatter string to the actual file object.
+ */
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/images/**/*.{jpeg,jpg,png,gif,webp,Webp}');
+
+// 1. Get the raw path from frontmatter (supporting both 'url' or 'source' keys)
+const rawImagePath = frontmatter.image?.source || frontmatter.image?.url;
+
+// 2. Convert alias @assets to the actual filesystem path for matching
+const resolvedPath = rawImagePath?.replace('@assets', '/src/assets');
+
+// 3. Find the optimized image object
+const optimizedImage = images[resolvedPath]?.();
+
 function getArticleReadingTime(body: string): number {
-	if (!body) return 0;
-	const wordsPerMinute = 183;
-	const numberOfWords = body.split(/\s/g).length;
-	const minutes = numberOfWords / wordsPerMinute;
-	const readTime = Math.ceil(minutes);
-	return readTime;
+    if (!body) return 0;
+    const wordsPerMinute = 183;
+    const numberOfWords = body.split(/\s/g).length;
+    const minutes = numberOfWords / wordsPerMinute;
+    const readTime = Math.ceil(minutes);
+    return readTime;
 }
 
 const readingTime = getArticleReadingTime(body);
-const postImage = frontmatter.image?.url || "https://mintaka.co/opengraph/social-og.jpg";
 const postAlt = frontmatter.image?.alt || frontmatter.title;
 ---
 
 <BaseLayout seo={seo}>
-	<section>
-		<div class="mx-auto max-w-7xl px-8 py-12 md:px-12 lg:px-32 lg:py-32">
-			<div class="flex flex-col gap-6 pt-20">
-				<Title
-					title={frontmatter.title}
-					subtitle={`Written by: <a href="${frontmatter.author.link}" rel="author">${frontmatter.author.name}</a> on ${frontmatter.pubDate
-						.toString()
-						.slice(0, 10)}`}
-				/>
+    <section>
+        <div class="mx-auto max-w-7xl px-8 py-12 md:px-12 lg:px-32 lg:py-32">
+            <div class="flex flex-col gap-6 pt-20">
+                <Title
+                    title={frontmatter.title}
+                    subtitle={`Written by: <a href="${frontmatter.author.link}" rel="author">${frontmatter.author.name}</a> on ${frontmatter.pubDate
+                        .toString()
+                        .slice(0, 10)}`}
+                />
 
-				<p class="max-w-2xl text-base text-slate-500">
-					<em>{frontmatter.description}</em>
-				</p>
+                <p class="max-w-2xl text-base text-slate-500">
+                    <em>{frontmatter.description}</em>
+                </p>
 
-				{
-					frontmatter?.link && (
-						<a class="font-mono text-xl font-bold" href={frontmatter?.link} target="_blank">
-							<Icon name="iconamoon:link-external-thin" class="inline" /> {t("blog.gotoproject")}
-						</a>
-					)
-				}
-			</div>
-			<div class="mt-12 w-full justify-center">
-    {/* 2. Update the Image tag here with explicit width/height or inferSize */}
-    <Image 
-        class="mt-12 w-full rounded-lg object-cover" 
-        src={postImage} 
-        alt={postAlt} 
-        width={1200} 
-        height={630}
-    />
-				<div class="flex justify-between px-2 pt-4 font-mono text-sm">
-					<div class="flex flex-wrap gap-1">
-						{frontmatter?.tags?.length > 0 && <span class="py-3">TAGS:</span>}
-						<ul class="flex flex-wrap justify-center">
-							{
-								frontmatter?.tags?.map((tag: string) => (
-									<li class="inline-flex items-center rounded-full px-1 py-3 font-medium uppercase tracking-widest">
-										<a href={`/tags/${tag}`}>{tag}</a>
-									</li>
-								))
-							}
-						</ul>
-					</div>
-					<span class="py-3">~{readingTime} MIN</span>
-				</div>
+                {
+                    frontmatter?.link && (
+                        <a class="font-mono text-xl font-bold" href={frontmatter?.link} target="_blank">
+                            <Icon name="iconamoon:link-external-thin" class="inline" /> {t("blog.gotoproject")}
+                        </a>
+                    )
+                }
+            </div>
 
-				<div class="prose-styles mt-12"><slot /></div>
-			</div>
-			<Comments />
-		</div>
-	</section>
-	<Cta />
+            <div class="mt-12 w-full justify-center">
+                {/* FIXED IMAGE LOGIC: 
+                   If it's a local optimized image, use the object. 
+                   If it's an external URL (https), use the string.
+                */}
+                {optimizedImage ? (
+                    <Image 
+                        class="w-full rounded-lg object-cover" 
+                        src={optimizedImage} 
+                        alt={postAlt} 
+                        width={1200} 
+                        height={630}
+                    />
+                ) : (
+                    <img 
+                        class="w-full rounded-lg object-cover" 
+                        src={rawImagePath || "https://mintaka.co/opengraph/social-og.jpg"} 
+                        alt={postAlt} 
+                    />
+                )}
+
+                <div class="flex justify-between px-2 pt-4 font-mono text-sm">
+                    <div class="flex flex-wrap gap-1">
+                        {frontmatter?.tags?.length > 0 && <span class="py-3">TAGS:</span>}
+                        <ul class="flex flex-wrap justify-center">
+                            {
+                                frontmatter?.tags?.map((tag: string) => (
+                                    <li class="inline-flex items-center rounded-full px-1 py-3 font-medium uppercase tracking-widest">
+                                        <a href={`/tags/${tag}`}>{tag}</a>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    </div>
+                    <span class="py-3">~{readingTime} MIN</span>
+                </div>
+
+                <div class="prose-styles mt-12">
+                    <slot />
+                </div>
+            </div>
+            <Comments />
+        </div>
+    </section>
+    <Cta />
 </BaseLayout>
