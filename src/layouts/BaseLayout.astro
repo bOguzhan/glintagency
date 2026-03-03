@@ -208,6 +208,40 @@ layers.forEach((layer, i) => {
             lenis.on('scroll', ScrollTrigger.update)
             gsap.ticker.add((time) => { lenis.raf(time * 1000) })
         </script>
+        <script is:inline>
+  const loader = document.getElementById('loader');
+  
+  // Check if the user has already seen the animation in this session
+  if (sessionStorage.getItem('visited')) {
+    // If they have, hide the loader immediately with no animation
+    if (loader) {
+        loader.style.display = 'none';
+    }
+  } else {
+    // If it's the first time, keep the loader visible
+    // and set the flag so they don't see it again
+    sessionStorage.setItem('visited', 'true');
+    
+    // Add an event listener to hide it after your animation finishes
+    // Adjust the timeout to match your animation duration
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500); // Fade out duration
+        }
+      }, 1500); // How long the loader stays visible
+    });
+  }
+</script>
+
+<style>
+  #loader {
+    transition: opacity 0.5s ease-in-out;
+  }
+</style>
 
         <style is:global>
             html.lenis, html.lenis body { height: auto; }
