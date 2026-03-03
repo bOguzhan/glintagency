@@ -31,35 +31,46 @@
 </div>
 
 <script is:inline>
-  const banner = document.getElementById('consent-banner');
-  const saveBtn = document.getElementById('save-consent');
-  const allBtn = document.getElementById('accept-all');
-  
-  const googleCheck = document.getElementById('check-google');
-  const metaCheck = document.getElementById('check-meta');
-
-  // Check existing consent
-  const existing = localStorage.getItem('site-consent');
-  if (!existing) {
-    banner.classList.remove('hidden');
-  }
-
-  function applyConsent(prefs) {
-    localStorage.setItem('site-consent', JSON.stringify(prefs));
-    banner.classList.add('hidden');
+  // Use a function to ensure IDs are grabbed after the DOM is ready
+  function initConsent() {
+    const banner = document.getElementById('consent-banner');
+    const saveBtn = document.getElementById('save-consent');
+    const allBtn = document.getElementById('accept-all');
     
-    // Trigger a page reload or a custom event to fire the tags
-    window.location.reload(); 
+    const googleCheck = document.getElementById('check-google');
+    const metaCheck = document.getElementById('check-meta');
+
+    if (!banner || !saveBtn || !allBtn) return;
+
+    // Show banner if no consent exists
+    if (!localStorage.getItem('site-consent')) {
+      banner.classList.remove('hidden');
+    }
+
+    function applyConsent(prefs) {
+      console.log('Saving consent:', prefs); // Debugging line
+      localStorage.setItem('site-consent', JSON.stringify(prefs));
+      banner.classList.add('hidden');
+      
+      // Reload to trigger the tags in the <head>
+      window.location.reload(); 
+    }
+
+    saveBtn.addEventListener('click', () => {
+      applyConsent({ 
+        google: googleCheck.checked, 
+        meta: metaCheck.checked 
+      });
+    });
+
+    allBtn.addEventListener('click', () => {
+      applyConsent({ google: true, meta: true });
+    });
   }
 
-  saveBtn.addEventListener('click', () => {
-    applyConsent({ 
-      google: googleCheck.checked, 
-      meta: metaCheck.checked 
-    });
-  });
+  // Run immediately
+  initConsent();
 
-  allBtn.addEventListener('click', () => {
-    applyConsent({ google: true, meta: true });
-  });
+  // If you use Astro ViewTransitions, also run on page swaps
+  document.addEventListener('astro:after-swap', initConsent);
 </script>
