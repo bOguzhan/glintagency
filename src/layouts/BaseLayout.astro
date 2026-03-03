@@ -115,8 +115,8 @@ function cursorFollowerActive() {
     // Power3.out starts very fast and slows down significantly at the end
     tl.to(counter, {
         val: 100,
-        duration: 3,
-        ease: "power2.out", 
+        duration: 1.8,
+        ease: "power1.out", 
         onUpdate: () => {
             percentText.innerText = Math.floor(counter.val);
         }
@@ -125,7 +125,7 @@ function cursorFollowerActive() {
     tl.to(wineWrapper, {
         height: "100%",
         duration: 1.8,
-        ease: "power2.out"
+        ease: "power1.out"
     }, 0);
 
     // 3. THE INSTANT SPLIT (Happens at the 3s mark)
