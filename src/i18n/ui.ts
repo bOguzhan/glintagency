@@ -17,7 +17,7 @@ or: "veya",
         tagline:
             "Amacımız, markanızı bir görsel şölene dönüştürerek dijital dünyada fark edilmenizi sağlamaktır. Estetik tasarım, profesyonel prodüksiyon ve stratejik sosyal medya yönetimiyle ürünlerinizin parlamasını sağlıyoruz. Sizin başarınız, bizim vizyonumuzdur.",
         "projects.yours": "Sizin Projeniz",
-        "projects.see": "Projeyi İncele",
+        "projects.see": "Hizmeti İncele",
    		"hero.title.main": "We create",
 		"hero.title.1": "magic",
 		"hero.title.2": "designs",
