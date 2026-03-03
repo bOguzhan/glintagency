@@ -53,19 +53,19 @@ function cursorFollowerActive() {
             <div id="preloader-top" class="absolute top-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
             <div id="preloader-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-[#800020] z-10 pointer-events-auto opacity-0"></div>
 
-            <div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20 overflow-hidden" style="height: 0%;">
-                <svg class="absolute left-0 w-[200%] h-[120px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -110px;">
-                    <defs>
-                        <path id="tight-wave" d="M-160 44c10 0 10-15 20-15s 10 15 20 15 10-15 20-15 10 15 20 15 v44h-80z" />
-                    </defs>
-                    <g class="parallax-water">
-                        <use xlink:href="#tight-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
-                        <use xlink:href="#tight-wave" x="48" y="2" fill="rgba(128, 0, 32, 0.5)" />
-                        <use xlink:href="#tight-wave" x="48" y="4" fill="rgba(128, 0, 32, 0.8)" />
-                        <use xlink:href="#tight-wave" x="48" y="6" fill="#800020" />
-                    </g>
-                </svg>
-            </div>
+<div id="wine-wrapper" class="absolute bottom-0 left-0 w-full bg-[#800020] z-20" style="height: 0%;">
+    <svg class="absolute left-0 w-[400%] h-[180px] z-30 pointer-events-none" id="wine-curve" viewBox="0 24 150 28" preserveAspectRatio="none" style="top: -170px;">
+        <defs>
+            <path id="tight-wave" d="M-160 44c30 0 30-25 60-25s 30 25 60 25 30-25 60-25 30 25 60 25 v44h-240z" />
+        </defs>
+        <g class="parallax-water">
+            <use xlink:href="#tight-wave" x="48" y="0" fill="rgba(128, 0, 32, 0.3)" />
+            <use xlink:href="#tight-wave" x="48" y="2" fill="rgba(128, 0, 32, 0.5)" />
+            <use xlink:href="#tight-wave" x="48" y="4" fill="rgba(128, 0, 32, 0.8)" />
+            <use xlink:href="#tight-wave" x="48" y="6" fill="#800020" />
+        </g>
+    </svg>
+</div>
 
             <div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
     <div class="flex items-baseline text-white mix-blend-difference">
@@ -97,17 +97,26 @@ function cursorFollowerActive() {
                 
                 if (!percentText || !wineWrapper || !preloaderTop || !preloaderBottom) return;
 
-                // 1. WATER MOTION
-                const layers = document.querySelectorAll(".parallax-water use");
-                layers.forEach((layer, i) => {
-                    gsap.to(layer, {
-                        x: i % 2 === 0 ? -30 : 30,
-                        duration: 0.5 + (i * 0.1),
-                        repeat: -1,
-                        yoyo: true,
-                        ease: "sine.inOut"
-                    });
-                });
+ // 1. SEA-LIKE WAVE MOTION
+const layers = document.querySelectorAll(".parallax-water use");
+layers.forEach((layer, i) => {
+    // We move each layer at a different speed and distance
+    gsap.to(layer, {
+        x: i % 2 === 0 ? -200 : -150, // Move left
+        duration: 3 + (i * 1),        // Different speeds for parallax effect
+        repeat: -1,                   // Loop forever
+        ease: "none"                  // Constant speed for natural flow
+    });
+
+    // Add a slight vertical "bobbing" to the waves
+    gsap.to(layer, {
+        y: i % 2 === 0 ? 5 : -5,
+        duration: 2 + (i * 0.5),
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+    });
+});
 
                 // 2. TIMELINE
                 const tl = gsap.timeline();
