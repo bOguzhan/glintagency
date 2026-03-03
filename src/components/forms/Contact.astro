@@ -82,9 +82,12 @@ const translatePath = useTranslatedPath(lang);
 
         try {
             const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData,
-            });
+    method: 'POST',
+    body: formData,
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest' // This forces the PHP $isAjax check to be true
+    }
+});
 
             if (response.ok) {
                 showModal('success');
