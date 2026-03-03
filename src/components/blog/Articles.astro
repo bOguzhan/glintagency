@@ -51,21 +51,20 @@ const allPosts = posts && posts.length > 0
 
  <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-2">
     {
-        allPosts
-            .slice(1)
-            .map((post) => (
+            allPosts && allPosts[0] && (
                 <Entry
-                    url={"/blog/" + post.slug}
-                    title={post.title}
-                    description={post.excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160)}
-                    alt={post.title}
-                    pubDate={post.date.slice(0, 10)}
-                    author={post.author?.node?.name}
-                    /* Ensure we are passing the best quality URL */
-                    image={post.featuredImage?.node?.sourceUrl || post.featuredImage?.node?.mediaItemUrl}
+                    url={"/blog/" + allPosts[0].slug}
+                    title={allPosts[0].title}
+                    description={allPosts[0].excerpt?.replace(/<[^>]*>?/gm, '').slice(0, 160)}
+                    alt={allPosts[0].title}
+                    pubDate={allPosts[0].date.slice(0, 10)}
+                    author={allPosts[0].author?.node?.name}
+                    /* FIX: Add the fallback to sourceUrl here too */
+                    image={allPosts[0].featuredImage?.node?.sourceUrl || allPosts[0].featuredImage?.node?.mediaItemUrl}
+                    titleInside={false}
                 />
-            ))
-    }
+            )
+        }
 </div>
     </div>
 </section>
