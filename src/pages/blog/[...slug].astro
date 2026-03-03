@@ -11,6 +11,7 @@ const response = await fetch(WP_GRAPHQL_URL, {
   method: 'POST',
   headers: { 
     'Content-Type': 'application/json',
+    'Host': 'glint.tr', // ADD THIS LINE
     'User-Agent': 'Astro-Server-Fetch' 
   },
   body: JSON.stringify({
@@ -66,11 +67,8 @@ const frontmatter = {
 
 const seo: AstroSeoProps = {
   title: post.title,
-  canonical: `http://89.168.120.151/blog/${post.slug}/`,
-  openGraph: {
-    title: post.title,
-    images: [{ url: post.featuredImage?.node?.mediaItemUrl || "" }],
-  },
+  canonical: `https://glint.tr/blog/${post.slug}/`, // Updated to HTTPS and domain
+  // ...
 };
 ---
 
