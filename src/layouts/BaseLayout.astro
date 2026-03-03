@@ -67,8 +67,12 @@ function cursorFollowerActive() {
     </svg>
 </div>
 
-            <div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
+<div id="loader-content" class="fixed bottom-0 left-0 z-40 p-6 md:p-10 flex items-baseline pointer-events-none">
     <div class="flex items-baseline text-white mix-blend-difference">
+        <svg class="w-[8vw] md:w-[5vw] h-auto mr-4 fill-current" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 0C55 45 95 45 100 50C95 55 55 55 50 100C45 55 5 55 0 50C5 45 45 45 50 0Z" />
+        </svg>
+        
         <span id="loader-percent" class="text-[15vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter">0</span>
         <span class="text-[5vw] md:text-[3vw] font-light ml-2">%</span>
     </div>
