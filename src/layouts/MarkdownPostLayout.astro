@@ -13,22 +13,19 @@ const translatePath = useTranslatedPath(lang);
 
 type Props = {
     frontmatter: any;
-    body: string;
+    body?: string; // Changed to optional to prevent errors if undefined
     seo?: AstroSeoProps;
 };
 
+const { frontmatter, body = "", seo } = Astro.props;
 
-
-const { frontmatter, body, seo } = Astro.props;
-
-// 1. Simply get the path. Since it's in /public, it's just a string.
 const shareImage = "/images/meta/mintaka_share.gif";
 const postAlt = frontmatter.image?.alt || frontmatter.title;
 
-function getArticleReadingTime(body: string): number {
-    if (!body) return 0;
+function getArticleReadingTime(content: string): number {
+    if (!content) return 0;
     const wordsPerMinute = 183;
-    const numberOfWords = body.split(/\s/g).length;
+    const numberOfWords = content.split(/\s/g).length;
     const minutes = numberOfWords / wordsPerMinute;
     return Math.ceil(minutes);
 }
@@ -37,6 +34,11 @@ const readingTime = getArticleReadingTime(body);
 ---
 
 <BaseLayout seo={seo}>
+    <link 
+      rel="stylesheet" 
+      href="https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.css" 
+    />
+
     <section>
         <div class="mx-auto max-w-7xl px-8 py-12 md:px-12 lg:px-32 lg:py-32">
             <div class="flex flex-col gap-6 pt-20">
@@ -50,22 +52,9 @@ const readingTime = getArticleReadingTime(body);
                 <p class="max-w-2xl text-base text-slate-500">
                     <em>{frontmatter.description}</em>
                 </p>
-
- <!--    Project Link          {
-                    frontmatter?.link && (
-                        <a class=" font-mono text-xl font-bold" href={frontmatter?.link} target="_blank">
-                            <Icon name="iconamoon:link-external-thin" class="inline" /> {t("blog.gotoproject")}
-                        </a>
-                    )
-                }-->
             </div>
 
             <div class="mt-12 w-full justify-center">
-                {/* FIX: Since images are in /public, we use a standard <img> tag.
-                   Astro's <Image> component is for assets in /src only.
-                */}
-
-
                 <div class="flex justify-between px-2 pt-4 font-mono text-sm">
                     <div class="flex flex-wrap gap-1">
                         {frontmatter?.tags?.length > 0 && <span class="py-3 text-slate-400">TAGS:</span>}
@@ -82,12 +71,60 @@ const readingTime = getArticleReadingTime(body);
                     <span class="py-3 text-slate-400">~{readingTime} MIN</span>
                 </div>
 
-                <div class="prose-styles mt-12">
+                <div id="post-content" class="prose-styles mt-12">
                     <slot />
                 </div>
             </div>
             <Comments />
         </div>
     </section>
-  <!-- <Cta /> -->
 </BaseLayout>
+
+<script>
+  import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: '#post-content',
+    children: 'img', // Automatically captures all images in the post
+    pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+  });
+
+  // Dynamically calculate image dimensions for the popup
+  lightbox.addFilter('itemData', (itemData) => {
+    const img = itemData.element as HTMLImageElement;
+    return {
+      src: img.src,
+      w: img.naturalWidth || 1200,
+      h: img.naturalHeight || 800,
+      alt: img.alt
+    };
+  });
+
+  lightbox.init();
+</script>
+
+<style is:global>
+  /* 3. Global fixes for WordPress images */
+  #post-content img {
+    cursor: zoom-in;
+    background: transparent !important;
+    height: auto !important;
+    /* Removed aspect-ratio to prevent the "dark box" issue */
+  }
+
+  /* Clear WP figure backgrounds */
+  #post-content figure {
+    background: transparent !important;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Ensure links around images don't interfere with the click */
+  #post-content a:has(img) {
+    pointer-events: none;
+    cursor: default;
+  }
+  
+  #post-content img {
+    pointer-events: auto;
+  }
+</style>
