@@ -97,11 +97,14 @@ const seo: AstroSeoProps = {
     width: 100% !important;
   }
 
-  article img {
+article img {
     width: 100% !important;
     height: auto !important;
-    aspect-ratio: 1/1; /* Makes them uniform squares, or use 4/5 for portraits */
-    object-fit: cover !important;
+    aspect-ratio: 1/1; 
+    /* CHANGED: 'contain' shows the whole image, 'cover' crops it */
+    object-fit: contain !important; 
+    /* OPTIONAL: Adds a background color to fill the "empty" space of the square */
+    background-color: #f3f4f6; 
     border-radius: 0.75rem;
     transition: transform 0.3s ease;
   }
