@@ -99,14 +99,21 @@ const seo: AstroSeoProps = {
 
 article img {
     width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 1/1; 
-    /* CHANGED: 'contain' shows the whole image, 'cover' crops it */
-    object-fit: contain !important; 
-    /* OPTIONAL: Adds a background color to fill the "empty" space of the square */
-    background-color: #f3f4f6; 
+    height: auto !important; /* This allows the image to scale naturally */
+    
+    /* REMOVE: aspect-ratio: 1/1; */
+    /* REMOVE: object-fit: contain; */
+    
+    background: transparent !important; /* Force the background to be invisible */
     border-radius: 0.75rem;
     transition: transform 0.3s ease;
+  }
+
+  /* Also clear any background from the WordPress figure wrapper */
+  article .wp-block-gallery figure,
+  article .wp-block-image figure {
+    background: transparent !important;
+    margin: 0 !important;
   }
 
   article img:hover {
