@@ -21,7 +21,7 @@ const response = await fetch("http://127.0.0.1/glintajans/graphql/", {
             excerpt
             featuredImage {
               node {
-                sourceUrl(size: LARGE) # This ensures a higher-quality image
+                mediaItemUrl # The raw, original file
                 altText
               }
             }
