@@ -6,6 +6,7 @@ import Title from "@components/global/Title.astro";
 import { getLangFromUrl, useTranslatedPath, useTranslations } from "@i18n/utils";
 import { Icon } from "astro-icon/components";
 import BaseLayout from "./BaseLayout.astro";
+import WhatsAppButton from "@components/WhatsAppButton.astro";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -13,7 +14,7 @@ const translatePath = useTranslatedPath(lang);
 
 type Props = {
     frontmatter: any;
-    body?: string; // Changed to optional to prevent errors if undefined
+    body?: string; 
     seo?: AstroSeoProps;
 };
 
@@ -73,6 +74,22 @@ const readingTime = getArticleReadingTime(body);
 
                 <div id="post-content" class="prose-styles mt-12">
                     <slot />
+
+                    <div class="mt-16 flex flex-col items-center justify-center gap-6 border-t border-zinc-100 pt-10 sm:flex-row not-prose">
+                        
+                        <div class="squircle-bg w-64 rounded-lg bg-zinc-900">
+                            <a
+                                href={translatePath("/contact")} 
+                                class="flex h-12 w-full items-center justify-center px-6 py-2 text-xl text-slate-200 transition-all hover:text-white md:font-bold">
+                                {t("contact.send")}
+                            </a>
+                        </div>
+
+                        <WhatsAppButton 
+                            phone="905536635000" 
+                            message="Merhaba Glint Ajans! Hizmetleriniz hakkında bilgi almak istiyorum." 
+                        />
+                    </div>
                 </div>
             </div>
             <Comments />
@@ -85,11 +102,10 @@ const readingTime = getArticleReadingTime(body);
 
   const lightbox = new PhotoSwipeLightbox({
     gallery: '#post-content',
-    children: 'img', // Automatically captures all images in the post
+    children: 'img', 
     pswpModule: () => import('https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.esm.js'),
   });
 
-  // Dynamically calculate image dimensions for the popup
   lightbox.addFilter('itemData', (itemData) => {
     const img = itemData.element as HTMLImageElement;
     return {
@@ -104,21 +120,17 @@ const readingTime = getArticleReadingTime(body);
 </script>
 
 <style is:global>
-  /* 3. Global fixes for WordPress images */
   #post-content img {
     cursor: zoom-in;
     background: transparent !important;
     height: auto !important;
-    /* Removed aspect-ratio to prevent the "dark box" issue */
   }
 
-  /* Clear WP figure backgrounds */
   #post-content figure {
     background: transparent !important;
     margin-bottom: 1.5rem;
   }
 
-  /* Ensure links around images don't interfere with the click */
   #post-content a:has(img) {
     pointer-events: none;
     cursor: default;
